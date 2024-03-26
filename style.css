@@ -1,0 +1,20 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.container{
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+canvas{
+    border: 1px solid rgba(25,25,25,1);
+
+}
+.tools {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    user-select: none;
+  
+  }
