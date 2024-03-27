@@ -7,12 +7,37 @@ import { g as np } from './shared/common.js';
 import { createCanvas } from "canvas";
 import { cnv } from "./shared/cnv.js";
 
+/**
+ * Описание программы
+ * --------------------
+ * Редактор текста на canvas.
+ * Заметки по структуре программы:
+ * - В целом что глубоко вложенные функции стараемся не использовать, так как часто это больше запутывает, чем помогает. Иногда
+ * длинная функция может быть понятнее, чем короткая со множеством вложенных функций. По возможности
+ * вложенные функции используются только если они имеют ясное, однозначное имя и делают что-то одно. Например 
+ * вместо того, чтобы включать вызов cnv.clear() внутрь функций printLine() и rerender(), она вызывается явно,
+ * рядом с этими функциями, для того, чтобы было понятно, что происходит.
+ *  
+ */
+
+// ---------------------------------------------------------------- OBSERVERABLES
+
+var functionCalled$ = new Subject();
+functionCalled$.subscribe(fn => {
+    if (['handleTyping', 'handleMousedown', 'handleMouseup'].includes(fn.self)) {
+        // оказывается, что текущая позиция всегда рассчитывается одним и тем же способом
+        let curPosition = np(curTextLine.start.x + cnv.getLineWidth(curTextLine), curTextLine.start.y);
+        drawCursor(curPosition);
+    }
+});
 
 // ---------------------------------------------------------------- GLOBALS
 
 
 var curTextLine = new TextBlock(new Point(0, 0), [], null);
 var textLinesCollection = [];
+
+var fontSizeStep = 4;
 
 
 
@@ -27,9 +52,7 @@ var textLinesCollection = [];
 })();
 
 
-
-
-// ---------------------------------------------------------------- EVENT HANDLERS
+// ---------------------------------------------------------------- MOUSE AND KEYBOARD EVENT HANDLERS
 
 
 
@@ -38,16 +61,20 @@ function handleMousedown(mouse) {
         // если в текущей строке есть текст, то добавляем добавляем текущую строку в коллекцию
         textLinesCollection.push(curTextLine.clone());
     }
-    curTextLine.start = mouse;
+    curTextLine.start = {...mouse};
     curTextLine.textArray = [];
 
     cnv.clear();
-    drawCursor(np(mouse));
     rerender();
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({
+        self: 'handleMousedown',
+    });
 }
 function handleTyping(event) {
     if (event.key === 'Enter') {
-        
+
         textLinesCollection.push(curTextLine.clone());
         curTextLine.textArray = [];
         curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace());
@@ -75,10 +102,44 @@ function handleTyping(event) {
         rerender();
     }
 
-    var curPosition = np(curTextLine.start.x + cnv.getLineWidth(curTextLine), curTextLine.start.y);
-    drawCursor(curPosition);
+    
+    // --- functionCalled$ emmition
+    functionCalled$.next({
+        self: 'handleTyping'
+    });
 }
 
+
+// ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
+function handleButtonupClick(event) {
+    cnv.setFontSize(curTextLine.fontSize + fontSizeStep);
+    curTextLine.fontSize = curTextLine.fontSize + fontSizeStep;
+
+    cnv.clear();
+    printLine(curTextLine);
+    rerender();
+
+    this.blur();
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({
+        self: 'handleButtonupClick'
+    });
+}
+
+function handleButtondownClick(event) {
+    cnv.setFontSize(curTextLine.fontSize - fontSizeStep);
+    curTextLine.fontSize = curTextLine.fontSize - fontSizeStep;
+
+    cnv.clear();
+    printLine(curTextLine);
+    rerender();
+
+    this.blur();
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({self:'handleButtondownClick'});
+}
 
 
 
@@ -98,6 +159,9 @@ function printLine(line) {
     cnv.setFontSize(line.fontSize);
     cnv.context.fillText(line.textArray.join(''), line.start.x, line.start.y);
     cnv.setFontSize(curTextLine.fontSize);
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({self:'printLine'});
 }
 
 function rerender() {
@@ -111,10 +175,13 @@ function rerender() {
     textLinesCollection.forEach(line => {
         printLine(line);
     });
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({self:'rerender'});
 }
 
 function drawCursor(position) {
-    
+
     cnv.context.strokeStyle = 'blue';
     cnv.context.lineWidth = 2;
 
@@ -122,6 +189,9 @@ function drawCursor(position) {
     cnv.context.moveTo(position.x, position.y);
     cnv.context.lineTo(position.x, position.y - cnv.getCursorHeight());
     cnv.context.stroke();
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({self:'drawCursor'});
 
 }
 
@@ -134,40 +204,8 @@ function drawCursor(position) {
 fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
 fromEvent(document, 'keydown').subscribe(handleTyping);
 
-
-document.querySelector('#font-size-up').addEventListener('click', () => {
-
-    cnv.setFontSize(curTextLine.fontSize + 2);
-    curTextLine.fontSize = curTextLine.fontSize + 2;
-
-    cnv.clear();
-    printLine(curTextLine);
-    rerender();
-
-
-    var curWidth = cnv.context.measureText(curTextLine.textArray.join('')).width;
-    var curPos = np(curTextLine.start.x + curWidth, curTextLine.start.y);
-    drawCursor(curPos);
-
-
-    buttonUp.blur();
-
-});
-
-document.querySelector('#font-size-down').addEventListener('click', () => {
-    cnv.setFontSize(curTextLine.fontSize - 2);
-    curTextLine.fontSize = curTextLine.fontSize - 2;
-
-    cnv.clear();
-    printLine(curTextLine);
-    rerender();
-
-    var curWidth = cnv.context.measureText(curTextLine.textArray.join('')).width;
-    var curPos = np(curTextLine.start.x + curWidth, curTextLine.start.y);
-    drawCursor(curPos);
-
-
-    buttonDown.blur();
-});
+document.querySelector('#font-size-up').addEventListener('click', handleButtonupClick);
+document.querySelector('#font-size-down').addEventListener('click', handleButtondownClick);
 
 // ----------------------------------------------------------------
+
