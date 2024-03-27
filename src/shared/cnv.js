@@ -6,6 +6,7 @@ export class cnv{
         canvas.width = width;
         canvas.height = height;
         cnv.context = canvas.getContext('2d');
+        cnv.context.textBaseline = 'bottom';
     }
     static clear() {
         cnv.context.clearRect(0, 0, cnv.context.canvas.width, cnv.context.canvas.height);
