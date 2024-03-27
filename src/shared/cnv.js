@@ -16,12 +16,20 @@ export class cnv{
         cnv.context.font = size + "px Arial";
     }
 
-    static getLineSpace() {
-        return cnv.context.measureText('M').width;
+    static getLineSpace(line) {
+        var font = cnv.context.font;
+        cnv.context.font = line.fontSize + "px Arial";
+        var lineSpace = cnv.context.measureText('M').fontBoundingBoxAscent;
+        cnv.context.font = font;
+        return lineSpace;
     }
 
     static getLineWidth(line) {
-        return cnv.context.measureText(line.textArray.join('')).width;
+        var font = cnv.context.font;
+        cnv.context.font = line.fontSize + "px Arial";
+        var lineWidth =  cnv.context.measureText(line.textArray.join('')).width;
+        cnv.context.font = font;
+        return lineWidth;
     }
 
     static getCursorHeight() {

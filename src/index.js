@@ -28,6 +28,7 @@ functionCalled$.subscribe(fn => {
         // оказывается, что текущая позиция всегда рассчитывается одним и тем же способом
         let curPosition = np(curTextLine.start.x + cnv.getLineWidth(curTextLine), curTextLine.start.y);
         drawCursor(curPosition);
+        drawBoundary();
     }
 });
 
@@ -77,7 +78,7 @@ function handleTyping(event) {
 
         textLinesCollection.push(curTextLine.clone());
         curTextLine.textArray = [];
-        curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace());
+        curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace(curTextLine));
 
         cnv.clear();
         rerender();
@@ -193,6 +194,22 @@ function drawCursor(position) {
     // --- functionCalled$ emmition
     functionCalled$.next({self:'drawCursor'});
 
+}
+
+function drawBoundary() {
+    var [p1, p2, p3, p4] = curTextLine.getBoundary();
+    cnv.context.strokeStyle = 'red';
+    cnv.context.lineWidth = 2;
+    cnv.context.beginPath();
+    cnv.context.moveTo(p1.x, p1.y);
+    cnv.context.lineTo(p2.x, p2.y);
+    cnv.context.lineTo(p3.x, p3.y);
+    cnv.context.lineTo(p4.x, p4.y);
+    cnv.context.lineTo(p1.x, p1.y);
+    cnv.context.stroke();
+
+    // --- functionCalled$ emmition
+    functionCalled$.next({self:'drawBoundary'});
 }
 
 
