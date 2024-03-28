@@ -4,8 +4,11 @@ import { Subject } from 'rxjs';
 import { TextBlock } from './models/TextBlock.js';
 import { Point } from './models/Point.js';
 import { g as np } from './shared/common.js';
-import { createCanvas } from "canvas";
 import { cnv } from "./shared/cnv.js";
+import { registerModeChangeEventListener } from "./handlers/keyboard/mode.js";
+
+
+import { getMode } from "./shared/mode.js";
 
 /**
  * # Описание программы
@@ -20,15 +23,18 @@ import { cnv } from "./shared/cnv.js";
  *  
  */
 
+// ---------------------------------------------------------------- OTHER EVENT LISENERS REGISTRATION
+registerModeChangeEventListener();
+
 // ---------------------------------------------------------------- OBSERVERABLES
 
 var functionCalled$ = new Subject();
 functionCalled$.subscribe(fn => {
-    if (['handleTyping', 'handleMousedown', 'handleMouseup'].includes(fn.self)) {
+    if (['handleTyping', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
         // оказывается, что текущая позиция всегда рассчитывается одним и тем же способом
         let curPosition = np(curTextLine.start.x + cnv.getLineWidth(curTextLine), curTextLine.start.y);
+
         drawCursor(curPosition);
-        drawBoundary();
     }
 });
 
@@ -57,12 +63,19 @@ var fontSizeStep = 4;
 
 
 
-function handleMousedown(mouse) {
+(function handleMousedown(mouse) {
+    if (getMode() !== 'text') return;
+    
+    if (!mouse) {
+        fromEvent(cnv.context.canvas,'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
+        return;
+    }
+
     if (curTextLine.textArray.length > 0) {
         // если в текущей строке есть текст, то добавляем добавляем текущую строку в коллекцию
         textLinesCollection.push(curTextLine.clone());
     }
-    curTextLine.start = {...mouse};
+    curTextLine.start = { ...mouse };
     curTextLine.textArray = [];
 
     cnv.clear();
@@ -72,8 +85,15 @@ function handleMousedown(mouse) {
     functionCalled$.next({
         self: 'handleMousedown',
     });
-}
-function handleTyping(event) {
+})();
+(function handleTyping(event) {
+    if (getMode() !== 'text') return;
+
+    if (!event) {
+        fromEvent(document, 'keydown').subscribe(handleTyping);
+        return;
+    }
+
     if (event.key === 'Enter') {
 
         textLinesCollection.push(curTextLine.clone());
@@ -103,44 +123,76 @@ function handleTyping(event) {
         rerender();
     }
 
-    
+
     // --- functionCalled$ emmition
     functionCalled$.next({
         self: 'handleTyping'
     });
-}
+})();
+
+(function handleMousemove(mouse) {
+
+    if (getMode() === 'text') return;
+    
+    if (!mouse) {
+        fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
+        return;
+    }
+    
+    if (getMode() === 'select') {
+        console.log(textLinesCollection);
+        textLinesCollection.forEach(line => {
+            if (line.isinBoundary(mouse)) {
+                drawBoundary(line);
+            }
+            else {
+                cnv.clear();
+                rerender();
+            }
+        });
+    }
+    if (getMode() === 'edit') {
+
+    }
+})();
 
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
-function handleButtonupClick(event) {
+
+
+(function handleButtonupClick(event) {
+    if (!event) {
+        document.querySelector('#font-size-up').addEventListener('click', handleButtonupClick);
+        return;
+    }
     cnv.setFontSize(curTextLine.fontSize + fontSizeStep);
     curTextLine.fontSize = curTextLine.fontSize + fontSizeStep;
 
     cnv.clear();
     printLine(curTextLine);
     rerender();
-
     this.blur();
 
     // --- functionCalled$ emmition
     functionCalled$.next({
         self: 'handleButtonupClick'
     });
-}
+})();
 
-function handleButtondownClick(event) {
+(function handleButtondownClick(event) {
+    if (!event) {
+        document.querySelector('#font-size-down').addEventListener('click', handleButtondownClick);
+        return;
+    }
     cnv.setFontSize(curTextLine.fontSize - fontSizeStep);
     curTextLine.fontSize = curTextLine.fontSize - fontSizeStep;
-
     cnv.clear();
     printLine(curTextLine);
     rerender();
-
     this.blur();
-
     // --- functionCalled$ emmition
-    functionCalled$.next({self:'handleButtondownClick'});
-}
+    functionCalled$.next({ self: 'handleButtondownClick' });
+})();
 
 
 
@@ -162,7 +214,7 @@ function printLine(line) {
     cnv.setFontSize(curTextLine.fontSize);
 
     // --- functionCalled$ emmition
-    functionCalled$.next({self:'printLine'});
+    functionCalled$.next({ self: 'printLine' });
 }
 
 function rerender() {
@@ -178,7 +230,7 @@ function rerender() {
     });
 
     // --- functionCalled$ emmition
-    functionCalled$.next({self:'rerender'});
+    functionCalled$.next({ self: 'rerender' });
 }
 
 function drawCursor(position) {
@@ -192,12 +244,13 @@ function drawCursor(position) {
     cnv.context.stroke();
 
     // --- functionCalled$ emmition
-    functionCalled$.next({self:'drawCursor'});
+    functionCalled$.next({ self: 'drawCursor' });
 
 }
 
-function drawBoundary() {
-    var [p1, p2, p3, p4] = curTextLine.getBoundary();
+function drawBoundary(line) {
+    var curColor = cnv.context.strokeStyle;
+    var { p1, p2, p3, p4 } = line.getBoundary();
     cnv.context.strokeStyle = 'red';
     cnv.context.lineWidth = 2;
     cnv.context.beginPath();
@@ -207,22 +260,8 @@ function drawBoundary() {
     cnv.context.lineTo(p4.x, p4.y);
     cnv.context.lineTo(p1.x, p1.y);
     cnv.context.stroke();
+    cnv.context.strokeStyle = curColor;
 
     // --- functionCalled$ emmition
-    functionCalled$.next({self:'drawBoundary'});
+    functionCalled$.next({ self: 'drawBoundary' });
 }
-
-
-
-
-
-// ---------------------------------------------------------------- EVENTS BINDING
-
-fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
-fromEvent(document, 'keydown').subscribe(handleTyping);
-
-document.querySelector('#font-size-up').addEventListener('click', handleButtonupClick);
-document.querySelector('#font-size-down').addEventListener('click', handleButtondownClick);
-
-// ----------------------------------------------------------------
-
