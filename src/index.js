@@ -129,7 +129,8 @@ function handleTyping(event) {
     }
     else {
 
-        if (isEmpty(curTextLine.start)) return; // когда этот объект пустой?
+        if (isEmpty(curTextLine.start)) return;  /**
+        когда этот объект пустой? При инициализации программы и при нажатии Escape */
 
         curTextLine.textArray.push(event.key);
 
