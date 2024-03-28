@@ -1,8 +1,6 @@
-import { cnv } from "../shared/cnv";
-import {g as np} from "../shared/common";
+import { cnv } from "../shared/cnv.js";
+import {g as np} from "../shared/common.js";
 export class TextBlock{
-
-
 
     constructor(start, textArray, fontSize) {
         this.start = {...start};

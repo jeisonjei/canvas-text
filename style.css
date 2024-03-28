@@ -11,10 +11,23 @@ canvas{
     border: 1px solid rgba(25,25,25,1);
 
 }
-.tools {
+.absolute-container{
+    width: 100%;
     position: absolute;
-    left: 50%;
+    left:50%;
     transform: translateX(-50%);
     user-select: none;
-  
+}
+
+.tools {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .flex{
+    display: flex;
+  }
+  .justify-content-center{
+    justify-content: center;
   }
