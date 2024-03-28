@@ -3,7 +3,7 @@ import { map } from "rxjs";
 import { Subject } from 'rxjs';
 import { TextBlock } from './models/TextBlock.js';
 import { Point } from './models/Point.js';
-import { g as np } from './shared/common.js';
+import { g as np, isEmpty } from './shared/common.js';
 import { cnv } from "./shared/cnv.js";
 import { registerModeChangeEventListener } from "./handlers/keyboard/mode.js";
 
@@ -51,12 +51,22 @@ functionCalled$.subscribe(fn => {
  * где ещё изменяется коллекция textLinesCollection?
  * 
  */
-
+var textLinesCollection$ = new Subject();
+textLinesCollection$.subscribe((v) => {
+    console.log(v.fnName, v.line);
+    if (v.fnName === 'push') {
+        textLinesCollection.push(v.line);
+    }
+    else if (v.fnName === 'pop') {
+        textLinesCollection.pop();
+    }
+    console.log('textLinesCollection', textLinesCollection);
+})
 
 // ---------------------------------------------------------------- GLOBALS
 
 
-var curTextLine = new TextBlock(new Point(0, 0), [], null);
+var curTextLine = new TextBlock({}, [], null);
 var textLinesCollection = [];
 
 var fontSizeStep = 4;
@@ -78,17 +88,12 @@ var fontSizeStep = 4;
 
 
 
-(function handleMousedown(mouse) {
+function handleMousedown(mouse) {
     if (getMode() !== 'text') return;
-    
-    if (!mouse) {
-        fromEvent(cnv.context.canvas,'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
-        return;
-    }
-
+    console.log(curTextLine.textArray);
     if (curTextLine.textArray.length > 0) {
         // если в текущей строке есть текст, то добавляем добавляем текущую строку в коллекцию
-        textLinesCollection.push(curTextLine.clone());
+        textLinesCollection$.next({fnName:'push',line:curTextLine.clone()});
     }
     curTextLine.start = { ...mouse };
     curTextLine.textArray = [];
@@ -100,18 +105,13 @@ var fontSizeStep = 4;
     functionCalled$.next({
         self: 'handleMousedown',
     });
-})();
-(function handleTyping(event) {
+};
+function handleTyping(event) {
     if (getMode() !== 'text') return;
-
-    if (!event) {
-        fromEvent(document, 'keydown').subscribe(handleTyping);
-        return;
-    }
 
     if (event.key === 'Enter') {
 
-        textLinesCollection.push(curTextLine.clone());
+        textLinesCollection$.next({fnName:'push',line:curTextLine.clone()});
         curTextLine.textArray = [];
         curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace(curTextLine));
 
@@ -129,6 +129,7 @@ var fontSizeStep = 4;
     }
     else {
 
+        if (isEmpty(curTextLine.start)) return; // когда этот объект пустой?
 
         curTextLine.textArray.push(event.key);
 
@@ -143,19 +144,13 @@ var fontSizeStep = 4;
     functionCalled$.next({
         self: 'handleTyping'
     });
-})();
+}
 
-(function handleMousemove(mouse) {
+function handleMousemove(mouse) {
 
     if (getMode() === 'text') return;
     
-    if (!mouse) {
-        fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
-        return;
-    }
-    
     if (getMode() === 'select') {
-        console.log(textLinesCollection);
         textLinesCollection.forEach(line => {
             if (line.isinBoundary(mouse)) {
                 drawBoundary(line);
@@ -169,7 +164,7 @@ var fontSizeStep = 4;
     if (getMode() === 'edit') {
 
     }
-})();
+}
 
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
@@ -280,3 +275,9 @@ function drawBoundary(line) {
     // --- functionCalled$ emmition
     functionCalled$.next({ self: 'drawBoundary' });
 }
+
+fromEvent(cnv.context.canvas,'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
+fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
+fromEvent(document, 'keydown').subscribe(handleTyping);
+
+export {curTextLine, textLinesCollection$}

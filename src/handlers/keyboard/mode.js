@@ -1,5 +1,7 @@
 
 import { getMode, setMode } from "../../shared/mode.js";
+import { curTextLine} from "../../index.js";
+import { textLinesCollection$ } from "../../index.js";
 
 function registerModeChangeEventListener(event) {
     if (!event) {
@@ -21,6 +23,12 @@ function registerModeChangeEventListener(event) {
     else {
         if (event.key === 'Escape' || event.key === 'Esc') {
             setMode('select');
+
+            if (curTextLine.textArray.length > 0) {
+                textLinesCollection$.next({fnName:'push',line:curTextLine.clone()});    
+            }
+            curTextLine.start = {};
+            curTextLine.textArray = [];
         }
     }
 }
