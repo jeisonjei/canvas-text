@@ -3,6 +3,7 @@ import { g as np } from "../shared/common.js";
 export class TextBlock {
 
     constructor(start, textArray, fontSize) {
+        this.id = Symbol();
         this.start = { ...start };
         this.textArray = [...textArray];
         this.fontSize = fontSize;
