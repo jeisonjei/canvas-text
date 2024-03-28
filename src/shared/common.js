@@ -7,4 +7,8 @@ function g(xOrPoint, y) {
     return new Point(xOrPoint, y);
 }
 
-export { g }
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+}
+
+export { g, isEmpty}
