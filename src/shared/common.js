@@ -11,4 +11,12 @@ function isEmpty(obj) {
     return Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
-export { g, isEmpty}
+// --- unique identifier ---
+var getId = (function () {
+    var counter = 0;
+    return function uniqueId() {
+        return counter++;
+    }
+})();
+
+export { g, isEmpty, getId}

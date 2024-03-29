@@ -6,6 +6,7 @@ import { Point } from './models/Point.js';
 import { g as np, isEmpty } from './shared/common.js';
 import { cnv } from "./shared/cnv.js";
 import { registerModeChangeEventListener } from "./handlers/keyboard/mode.js";
+import { getId } from "./shared/common.js";
 
 
 import { getMode } from "./shared/mode.js";
@@ -53,8 +54,8 @@ functionCalled$.subscribe(fn => {
  */
 var textLinesCollection$ = new Subject();
 textLinesCollection$.subscribe((v) => {
-    console.log(v.fnName, v.line);
     if (v.fnName === 'push') {
+        v.line.id = getId();
         textLinesCollection.push(v.line);
     }
     else if (v.fnName === 'pop') {
@@ -90,10 +91,10 @@ var fontSizeStep = 4;
 
 function handleMousedown(mouse) {
     if (getMode() !== 'text') return;
-    console.log(curTextLine.textArray);
+
     if (curTextLine.textArray.length > 0) {
         // если в текущей строке есть текст, то добавляем добавляем текущую строку в коллекцию
-        textLinesCollection$.next({fnName:'push',line:curTextLine.clone()});
+        textLinesCollection$.next({ fnName: 'push', line: curTextLine.clone() });
     }
     curTextLine.start = { ...mouse };
     curTextLine.textArray = [];
@@ -111,7 +112,7 @@ function handleTyping(event) {
 
     if (event.key === 'Enter') {
 
-        textLinesCollection$.next({fnName:'push',line:curTextLine.clone()});
+        textLinesCollection$.next({ fnName: 'push', line: curTextLine.clone() });
         curTextLine.textArray = [];
         curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace(curTextLine));
 
@@ -150,7 +151,7 @@ function handleTyping(event) {
 function handleMousemove(mouse) {
 
     if (getMode() === 'text') return;
-    
+
     if (getMode() === 'select') {
         textLinesCollection.forEach(line => {
             if (line.isinBoundary(mouse)) {
@@ -277,8 +278,8 @@ function drawBoundary(line) {
     functionCalled$.next({ self: 'drawBoundary' });
 }
 
-fromEvent(cnv.context.canvas,'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
+fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
 fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
 fromEvent(document, 'keydown').subscribe(handleTyping);
 
-export {curTextLine, textLinesCollection$}
+export { curTextLine, textLinesCollection$ }
