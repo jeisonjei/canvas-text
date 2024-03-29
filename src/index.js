@@ -7,6 +7,7 @@ import { g as np, isEmpty } from './shared/common.js';
 import { cnv } from "./shared/cnv.js";
 import { registerModeChangeEventListener } from "./handlers/keyboard/mode.js";
 import { getId } from "./shared/common.js";
+import { textLinesCollection, textLinesCollection$, curTextLine, fontSizeStep, addLine } from "./shared/state.js";
 
 
 import { getMode } from "./shared/mode.js";
@@ -39,41 +40,6 @@ functionCalled$.subscribe(fn => {
     }
 });
 
-/**
- * Таким же образом зарегистрировать действия, при которых будет происходить добавление curTextLine в коллекцию textLinesCollection и удаление.
- * Нужно сделать так, чтобы не осталось мест, где добавление или удаление строки из коллекции происходило вне этого издателя.
- * Как это сделать?
- * На данный момент это следующие операции:
- * 
- * Функция handleMousedown(mouse)
- * - добавляет текущую строку в коллекцию textLinesCollection при определённых условиях.
- * Блок if(event.key === 'Enter' ) {} функции handleTyping() 
- * - добавляет текущую строку в коллекцию textLinesCollection.
- * где ещё изменяется коллекция textLinesCollection?
- * 
- */
-var textLinesCollection$ = new Subject();
-textLinesCollection$.subscribe((v) => {
-    if (v.fnName === 'push') {
-        v.line.id = getId();
-        textLinesCollection.push(v.line);
-    }
-    else if (v.fnName === 'pop') {
-        textLinesCollection.pop();
-    }
-    console.log('textLinesCollection', textLinesCollection);
-})
-
-// ---------------------------------------------------------------- GLOBALS
-
-
-var curTextLine = new TextBlock({}, [], null);
-var textLinesCollection = [];
-
-var fontSizeStep = 4;
-
-
-
 // ---------------------------------------------------------------- INITIALIZATION
 
 (function () {
@@ -92,10 +58,8 @@ var fontSizeStep = 4;
 function handleMousedown(mouse) {
     if (getMode() !== 'text') return;
 
-    if (curTextLine.textArray.length > 0) {
-        // если в текущей строке есть текст, то добавляем добавляем текущую строку в коллекцию
-        textLinesCollection$.next({ fnName: 'push', line: curTextLine.clone() });
-    }
+    addLine(curTextLine.clone());
+
     curTextLine.start = { ...mouse };
     curTextLine.textArray = [];
 
@@ -112,7 +76,7 @@ function handleTyping(event) {
 
     if (event.key === 'Enter') {
 
-        textLinesCollection$.next({ fnName: 'push', line: curTextLine.clone() });
+        addLine(curTextLine.clone());
         curTextLine.textArray = [];
         curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace(curTextLine));
 
@@ -130,8 +94,7 @@ function handleTyping(event) {
     }
     else {
 
-        if (isEmpty(curTextLine.start)) return;  /**
-        когда этот объект пустой? При инициализации программы и при нажатии Escape */
+        if (isEmpty(curTextLine.start)) return;  /** Когда этот объект пустой? При инициализации программы и при нажатии Escape */
 
         curTextLine.textArray.push(event.key);
 
@@ -281,5 +244,3 @@ function drawBoundary(line) {
 fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
 fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
 fromEvent(document, 'keydown').subscribe(handleTyping);
-
-export { curTextLine, textLinesCollection$ }

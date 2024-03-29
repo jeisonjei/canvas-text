@@ -1,7 +1,7 @@
 
 import { getMode, setMode } from "../../shared/mode.js";
-import { curTextLine} from "../../index.js";
-import { textLinesCollection$ } from "../../index.js";
+import { textLinesCollection$, curTextLine } from "../../shared/state.js";
+
 
 function registerModeChangeEventListener(event) {
     if (!event) {
