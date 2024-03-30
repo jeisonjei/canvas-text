@@ -40,15 +40,6 @@ functionCalled$.subscribe(fn => {
     }
 });
 
-var isinBoundary$ = new Subject();
-isinBoundary$.subscribe(line => {
-    if (line) {
-        cnv.clear();
-        rerender();
-        drawBoundary(line);
-    }
-
-});
 
 // ---------------------------------------------------------------- INITIALIZATION
 
@@ -127,13 +118,23 @@ function handleMousemove(mouse) {
 
     if (getMode() === 'select') {
         textLinesCollection.forEach(line => {
-            line.handleMouseEvent('mousemove', mouse);
+            if (line.isinBoundary(mouse)) {
+                cnv.clear();
+                rerender();
+                drawBoundary(line);
+            }
         });
+        let a = textLinesCollection.some(line=>line.isinBoundary(mouse));
+        if (!a) {
+            cnv.clear();
+            rerender();
+        }
     }
     if (getMode() === 'edit') {
 
     }
 }
+
 
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
@@ -245,23 +246,6 @@ function drawBoundary(line) {
     functionCalled$.next({ self: 'drawBoundary' });
 }
 
-function clearBoundary(line) {
-    var curColor = cnv.context.strokeStyle;
-    var { p1, p2, p3, p4 } = line.getBoundary();
-    cnv.context.strokeStyle ='white';
-    cnv.context.lineWidth = 2;
-    cnv.context.beginPath();
-    cnv.context.moveTo(p1.x, p1.y);
-    cnv.context.lineTo(p2.x, p2.y);
-    cnv.context.lineTo(p3.x, p3.y);
-    cnv.context.lineTo(p4.x, p4.y);
-    cnv.context.lineTo(p1.x, p1.y);
-    cnv.context.stroke();
-    cnv.context.strokeStyle = curColor;
-
-    // --- functionCalled$ emmition
-    functionCalled$.next({ self: 'clearBoundary' });
-}
 
 
 fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
@@ -269,4 +253,3 @@ fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.cont
 fromEvent(document, 'keydown').subscribe(handleTyping);
 
 
-export { isinBoundary$}

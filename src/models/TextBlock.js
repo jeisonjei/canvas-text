@@ -1,6 +1,6 @@
 import { cnv } from "../shared/cnv.js";
 import { g as np } from "../shared/common.js";
-import { isinBoundary$ } from "../index.js";
+
 export class TextBlock {
 
     constructor(start, textArray, fontSize) {
@@ -32,12 +32,4 @@ export class TextBlock {
         return (p1.x <= mouse.x && p2.x >= mouse.x && p4.y >=mouse.y && p1.y<=mouse.y);
     }
 
-    handleMouseEvent(event, mouse) {
-        if (this.isinBoundary(mouse)) {
-            isinBoundary$.next(this);
-        }
-        else {
-            isinBoundary$.next(null);
-        }
-    }
 }
