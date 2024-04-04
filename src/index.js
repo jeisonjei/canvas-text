@@ -57,12 +57,22 @@ functionCalled$.subscribe(fn => {
 
 
 function handleMousedown(mouse) {
-    if (getMode() !== 'text') return;
+    if (getMode() === 'select') {
+        textLinesCollection.forEach(line => {
+            if (line.isinBoundary(mouse)) {
+                line.selected = !line.selected;
+            }
+        })
 
-    addLine(curTextLine.clone());
+    }
 
-    curTextLine.start = { ...mouse };
-    curTextLine.textArray = [];
+    else if (getMode() === 'text') {
+
+        addLine(curTextLine.clone());
+
+        curTextLine.start = { ...mouse };
+        curTextLine.textArray = [];
+    }
 
     cnv.clear();
     rerender();
@@ -190,8 +200,10 @@ function printLine(line) {
      * Если отрисовывается только одна текущая строка, то устанавливаемый и восстанавливаемый размер шрифта совпадают.
      */
     cnv.setFontSize(line.fontSize);
+    cnv.context.fillStyle = line.color;
     cnv.context.fillText(line.textArray.join(''), line.start.x, line.start.y);
     cnv.setFontSize(curTextLine.fontSize);
+    cnv.context.fillStyle = curTextLine.color;
 
     // --- functionCalled$ emmition
     functionCalled$.next({ self: 'printLine' });
@@ -253,3 +265,4 @@ fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.cont
 fromEvent(document, 'keydown').subscribe(handleTyping);
 
 
+export { rerender}

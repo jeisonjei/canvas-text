@@ -3,11 +3,26 @@ import { g as np } from "../shared/common.js";
 
 export class TextBlock {
 
-    constructor(start, textArray, fontSize) {
+    get selected() {
+        return this._selected;   
+    }
+    set selected(value) {
+        this._selected = value;
+        if (this._selected) {
+            this.color = '#919191';
+        }
+        else {
+            this.color = 'black';
+        }
+    }
+
+    constructor(start, textArray, fontSize, color) {
         this.id = 0;
         this.start = { ...start };
         this.textArray = [...textArray];
         this.fontSize = fontSize;
+        this._selected = false;
+        this.color = color;
     }
 
 

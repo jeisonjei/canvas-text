@@ -4,7 +4,7 @@ import { getId } from "./common";
 
 // ****************************************************************
 
-var curTextLine = new TextBlock({}, [], null);
+var curTextLine = new TextBlock({}, [], null, 'black');
 var textLinesCollection = [];
 
 var fontSizeStep = 4;
@@ -21,10 +21,9 @@ textLinesCollection$.subscribe((v) => {
         }
     }
     else if (v.fnName === 'pop') {
-        let index = textLinesCollection.indexOf(v.line.id);
+        let index = textLinesCollection.indexOf(v.line);
         textLinesCollection = [...textLinesCollection.slice(0, index), ...textLinesCollection.slice(index + 1)];
     }
-    console.log('textLinesCollection', textLinesCollection);
 });
 
 function addLine(line) {

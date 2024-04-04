@@ -1,6 +1,8 @@
-
+import { cnv } from "../../shared/cnv.js";
 import { getMode, setMode } from "../../shared/mode.js";
-import { textLinesCollection$, curTextLine } from "../../shared/state.js";
+import { textLinesCollection$, curTextLine, textLinesCollection, deleteLine } from "../../shared/state.js";
+import { rerender } from "../../index.js";
+
 
 
 function registerModeChangeEventListener(event) {
@@ -19,13 +21,20 @@ function registerModeChangeEventListener(event) {
         else if (event.key === 't' || event.key === 'T' || event.key === 'е') {
             setMode('text');
         }
+        else if (event.key === 'Delete') {
+            let selected = textLinesCollection.filter(line => line.selected);
+            selected.forEach(line => deleteLine(line));
+            cnv.clear();
+            rerender();
+        }
+
     }
     else {
         if (event.key === 'Escape' || event.key === 'Esc') {
             setMode('select');
 
             if (curTextLine.textArray.length > 0) {
-                textLinesCollection$.next({fnName:'push',line:curTextLine.clone()});    
+                textLinesCollection$.next({ fnName: 'push', line: curTextLine.clone() });
             }
             curTextLine.start = {};
             curTextLine.textArray = [];
