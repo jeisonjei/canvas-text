@@ -131,7 +131,7 @@ function handleMousemove(mouse) {
             if (line.isinBoundary(mouse)) {
                 cnv.clear();
                 rerender();
-                drawBoundary(line);
+                drawBoundary(line, 'red');
             }
         });
         let a = textLinesCollection.some(line=>line.isinBoundary(mouse));
@@ -141,7 +141,18 @@ function handleMousemove(mouse) {
         }
     }
     if (getMode() === 'edit') {
-
+        textLinesCollection.forEach(line => {
+            if (line.isinBoundary(mouse)) {
+                cnv.clear();
+                rerender();
+                drawBoundary(line, 'blue');
+            }
+        });
+        let a = textLinesCollection.some(line => line.isinBoundary(mouse));
+        if (!a) {
+            cnv.clear();
+            rerender();
+        }
     }
 }
 
@@ -240,10 +251,10 @@ function drawCursor(position) {
 
 }
 
-function drawBoundary(line) {
+function drawBoundary(line, color) {
     var curColor = cnv.context.strokeStyle;
     var { p1, p2, p3, p4 } = line.getBoundary();
-    cnv.context.strokeStyle = 'red';
+    cnv.context.strokeStyle = color;
     cnv.context.lineWidth = 2;
     cnv.context.beginPath();
     cnv.context.moveTo(p1.x, p1.y);
