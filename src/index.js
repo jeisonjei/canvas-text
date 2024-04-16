@@ -7,7 +7,7 @@ import { g as np, isEmpty } from './shared/common.js';
 import { cnv } from "./shared/cnv.js";
 import { registerModeChangeEventListener } from "./handlers/keyboard/mode.js";
 import { getId } from "./shared/common.js";
-import { textLinesCollection, textLinesCollection$, curTextLine, fontSizeStep, addLine } from "./shared/state.js";
+import { textLinesCollection, textLinesCollection$, a, fontSizeStep, addLine, deleteLine } from "./shared/state.js";
 
 
 import { getMode } from "./shared/mode.js";
@@ -34,7 +34,7 @@ var functionCalled$ = new Subject();
 functionCalled$.subscribe(fn => {
     if (['handleTyping', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
         // оказывается, что текущая позиция всегда рассчитывается одним и тем же способом
-        let curPosition = np(curTextLine.start.x + cnv.getLineWidth(curTextLine), curTextLine.start.y);
+        let curPosition = np(a.curTextLine.start.x + cnv.getLineWidth(a.curTextLine), a.curTextLine.start.y);
 
         drawCursor(curPosition);
     }
@@ -46,8 +46,8 @@ functionCalled$.subscribe(fn => {
 (function () {
     cnv.init('canvas', window.innerWidth - 50, window.innerHeight - 50);
 
-    curTextLine.fontSize = 60;
-    cnv.setFontSize(curTextLine.fontSize);
+    a.curTextLine.fontSize = 60;
+    cnv.setFontSize(a.curTextLine.fontSize);
 
 })();
 
@@ -66,12 +66,25 @@ function handleMousedown(mouse) {
 
     }
 
+    else if (getMode() === 'edit') {
+        let selectedLine = textLinesCollection.find(line => line.isinBoundary(mouse));
+        
+
+        if (selectedLine) {
+            a.curTextLine = selectedLine.clone();
+            console.log(a.curTextLine.textArray);
+            deleteLine(selectedLine);
+        }
+        return;
+
+    }
+
     else if (getMode() === 'text') {
 
-        addLine(curTextLine.clone());
+        addLine(a.curTextLine.clone());
 
-        curTextLine.start = { ...mouse };
-        curTextLine.textArray = [];
+        a.curTextLine.start = { ...mouse };
+        a.curTextLine.textArray = [];
     }
 
     cnv.clear();
@@ -87,30 +100,30 @@ function handleTyping(event) {
 
     if (event.key === 'Enter') {
 
-        addLine(curTextLine.clone());
-        curTextLine.textArray = [];
-        curTextLine.start = np(curTextLine.start.x, curTextLine.start.y + cnv.getLineSpace(curTextLine));
+        addLine(a.curTextLine.clone());
+        a.curTextLine.textArray = [];
+        a.curTextLine.start = np(a.curTextLine.start.x, a.curTextLine.start.y + cnv.getLineSpace(a.curTextLine));
 
         cnv.clear();
         rerender();
 
     }
     else if (event.key === 'Backspace') {
-        curTextLine.textArray.pop();
+        a.curTextLine.textArray.pop();
 
         cnv.clear();
-        printLine(curTextLine);
+        printLine(a.curTextLine);
 
         rerender();
     }
     else {
 
-        if (isEmpty(curTextLine.start)) return;  /** Когда этот объект пустой? При инициализации программы и при нажатии Escape */
+        if (isEmpty(a.curTextLine.start)) return;  /** Когда этот объект пустой? При инициализации программы и при нажатии Escape */
 
-        curTextLine.textArray.push(event.key);
+        a.curTextLine.textArray.push(event.key);
 
         cnv.clear();
-        printLine(curTextLine);
+        printLine(a.curTextLine);
 
         rerender();
     }
@@ -166,11 +179,11 @@ function handleMousemove(mouse) {
         document.querySelector('#font-size-up').addEventListener('click', handleButtonupClick);
         return;
     }
-    cnv.setFontSize(curTextLine.fontSize + fontSizeStep);
-    curTextLine.fontSize = curTextLine.fontSize + fontSizeStep;
+    cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
+    a.curTextLine.fontSize = a.curTextLine.fontSize + fontSizeStep;
 
     cnv.clear();
-    printLine(curTextLine);
+    printLine(a.curTextLine);
     rerender();
     this.blur();
 
@@ -185,10 +198,10 @@ function handleMousemove(mouse) {
         document.querySelector('#font-size-down').addEventListener('click', handleButtondownClick);
         return;
     }
-    cnv.setFontSize(curTextLine.fontSize - fontSizeStep);
-    curTextLine.fontSize = curTextLine.fontSize - fontSizeStep;
+    cnv.setFontSize(a.curTextLine.fontSize - fontSizeStep);
+    a.curTextLine.fontSize = a.curTextLine.fontSize - fontSizeStep;
     cnv.clear();
-    printLine(curTextLine);
+    printLine(a.curTextLine);
     rerender();
     this.blur();
     // --- functionCalled$ emmition
@@ -213,8 +226,8 @@ function printLine(line) {
     cnv.setFontSize(line.fontSize);
     cnv.context.fillStyle = line.color;
     cnv.context.fillText(line.textArray.join(''), line.start.x, line.start.y);
-    cnv.setFontSize(curTextLine.fontSize);
-    cnv.context.fillStyle = curTextLine.color;
+    cnv.setFontSize(a.curTextLine.fontSize);
+    cnv.context.fillStyle = a.curTextLine.color;
 
     // --- functionCalled$ emmition
     functionCalled$.next({ self: 'printLine' });
@@ -224,7 +237,7 @@ function rerender() {
     /**
      * Массив textLines не содержит текущую строку. 
      * То есть в программе везде разделяется отрисовка текущей строки и коллекции уже существующих строк.
-     * Для отрисовки текущей строки используется функция printLine(curTextLine),
+     * Для отрисовки текущей строки используется функция printLine(a.curTextLine),
      * а для отрисовки коллекции уже существующих строк используется та же функция, но в неё уже не передаётся текущая строка.
      */
 

@@ -1,6 +1,6 @@
 import { cnv } from "../../shared/cnv.js";
 import { getMode, setMode } from "../../shared/mode.js";
-import { textLinesCollection$, curTextLine, textLinesCollection, deleteLine } from "../../shared/state.js";
+import { textLinesCollection$, a, textLinesCollection, deleteLine } from "../../shared/state.js";
 import { rerender } from "../../index.js";
 
 
@@ -33,11 +33,11 @@ function registerModeChangeEventListener(event) {
         if (event.key === 'Escape' || event.key === 'Esc') {
             setMode('select');
 
-            if (curTextLine.textArray.length > 0) {
-                textLinesCollection$.next({ fnName: 'push', line: curTextLine.clone() });
+            if (a.curTextLine.textArray.length > 0) {
+                textLinesCollection$.next({ fnName: 'push', line: a.curTextLine.clone() });
             }
-            curTextLine.start = {};
-            curTextLine.textArray = [];
+            a.curTextLine.start = {};
+            a.curTextLine.textArray = [];
         }
     }
 }

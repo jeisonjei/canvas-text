@@ -27,8 +27,7 @@ export class TextBlock {
 
 
     clone() {
-        var text = this.textArray.join('');
-        return new TextBlock(this.start, text, this.fontSize);
+        return new TextBlock(this.start, this.textArray, this.fontSize, this.color);
     }
 
     getBoundary() {

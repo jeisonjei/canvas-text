@@ -3,8 +3,11 @@ import { Subject, fromEvent, map } from "rxjs";
 import { getId } from "./common";
 
 // ****************************************************************
+var a = {
+    curTextLine: new TextBlock({}, [], null, 'black')
+    
+}
 
-var curTextLine = new TextBlock({}, [], null, 'black');
 var textLinesCollection = [];
 
 var fontSizeStep = 4;
@@ -35,4 +38,4 @@ function deleteLine(line) {
 
 // ****************************************************************
 
-export { curTextLine, textLinesCollection, fontSizeStep, textLinesCollection$, addLine, deleteLine };
+export { a, textLinesCollection, fontSizeStep, textLinesCollection$, addLine, deleteLine };
