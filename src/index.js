@@ -72,10 +72,10 @@ function handleMousedown(mouse) {
 
         if (selectedLine) {
             a.curTextLine = selectedLine.clone();
-            console.log(a.curTextLine.textArray);
             deleteLine(selectedLine);
+            
+            
         }
-        return;
 
     }
 
@@ -88,6 +88,7 @@ function handleMousedown(mouse) {
     }
 
     cnv.clear();
+    printLine(a.curTextLine);
     rerender();
 
     // --- functionCalled$ emmition
@@ -157,13 +158,15 @@ function handleMousemove(mouse) {
         textLinesCollection.forEach(line => {
             if (line.isinBoundary(mouse)) {
                 cnv.clear();
+                printLine(a.curTextLine);
                 rerender();
                 drawBoundary(line, 'blue');
             }
         });
-        let a = textLinesCollection.some(line => line.isinBoundary(mouse));
-        if (!a) {
+        let t = textLinesCollection.some(line => line.isinBoundary(mouse));
+        if (!t) {
             cnv.clear();
+            printLine(a.curTextLine);
             rerender();
         }
     }
