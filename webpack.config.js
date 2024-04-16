@@ -38,6 +38,9 @@ const config = {
             // Learn more about loaders from https://webpack.js.org/loaders/
         ],
     },
+    devtool: 'source-map',
+    mode: 'development'
+
 };
 
 module.exports = () => {
