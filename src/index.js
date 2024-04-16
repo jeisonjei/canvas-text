@@ -10,7 +10,7 @@ import { getId } from "./shared/common.js";
 import { textLinesCollection, textLinesCollection$, a, fontSizeStep, addLine, deleteLine } from "./shared/state.js";
 
 
-import { getMode } from "./shared/mode.js";
+import { getMode, setMode } from "./shared/mode.js";
 
 /**
  * # Описание программы
@@ -74,6 +74,13 @@ function handleMousedown(mouse) {
             a.curTextLine = selectedLine.clone();
             deleteLine(selectedLine);
             
+            /**
+             * При редактировании строка из коллекции удаляется, а текущая переназначается,
+             * но далее устанавливается режим текст, выход из которого возможен нажатием Escape.
+             * А при нажатии Escape текущая строка добавляется в коллекцию и обнуляется (см. модуль mode.js)
+             * 
+             */
+            setMode('text');
             
         }
 
