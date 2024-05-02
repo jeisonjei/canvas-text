@@ -1,5 +1,5 @@
 import { fromEvent } from "rxjs";
-import { map } from "rxjs";
+import { map, filter } from "rxjs";
 import { Subject } from 'rxjs';
 import { TextBlock } from './models/TextBlock.js';
 import { Point } from './models/Point.js';
@@ -11,6 +11,7 @@ import { textLinesCollection, textLinesCollection$, a, fontSizeStep, addLine, de
 
 
 import { getMode, setMode } from "./shared/mode.js";
+import { filterText } from "./services/textFilter.js";
 
 /**
  * # Описание программы
@@ -123,6 +124,12 @@ function handleTyping(event) {
         printLine(a.curTextLine);
 
         rerender();
+    }
+    else if (event.key === 'ArrowLeft') {
+        
+    }
+    else if (event.key === 'ArrowRight') {
+        
     }
     else {
 
@@ -296,7 +303,7 @@ function drawBoundary(line, color) {
 
 fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
 fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
-fromEvent(document, 'keydown').subscribe(handleTyping);
+fromEvent(document, 'keydown').pipe(filter(event=>filterText(event))).subscribe(handleTyping);
 
 
 export { rerender}
