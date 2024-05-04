@@ -174,7 +174,7 @@ function handleTyping(event) {
         /**
          * Собственно сама операция отрисовки нажимаемых символов
          */
-        if (isEmpty(a.curTextLine.start)) return;  /** Когда этот объект пустой? При инициализации программы и при нажатии Escape */
+        if (isEmpty(a.curTextLine.start)) return;  /** Когда этот объект start пустой? При инициализации программы и при нажатии Escape */
 
         a.curTextLine.textArray.push(event.key);
 
