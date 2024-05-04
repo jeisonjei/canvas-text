@@ -34,7 +34,7 @@ registerModeChangeEventListener();
 var functionCalled$ = new Subject();
 functionCalled$.subscribe(fn => {
     if (['handleTyping', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
-        // оказывается, что текущая позиция всегда рассчитывается одним и тем же способом
+        // оказывается, что если курсор движется только вперёд, то текущая позиция всегда рассчитывается одним и тем же способом
         let curPosition = np(a.curTextLine.start.x + cnv.getLineWidth(a.curTextLine), a.curTextLine.start.y);
 
         drawCursor(curPosition);
