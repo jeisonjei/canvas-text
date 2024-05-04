@@ -6,6 +6,9 @@ export class Point{
     add(point) {
         return new Point(this.x + point.x, this.y + point.y);
     }
+    subtract(point) {
+        return new Point(this.x - point.x, this.y - point.y);
+    }
     clone() {
         return new Point(this.x, this.y);
     }
