@@ -1,10 +1,12 @@
 import { TextBlock } from "../models/TextBlock";
 import { Subject, fromEvent, map } from "rxjs";
 import { getId } from "./common";
+import { Cursor } from "../models/Cursor";
 
 // ****************************************************************
 var a = {
-    curTextLine: new TextBlock({}, [], null, 'black')
+    curTextLine: new TextBlock({}, [], null, 'black'),
+    cursor: new Cursor(null),
     
 }
 
