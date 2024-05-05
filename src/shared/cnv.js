@@ -2,7 +2,7 @@ export class cnv{
     static context = null;
 
     static init(selector, width, height) {
-        var canvas = document.querySelector(selector);
+        var canvas = document.querySelector(`canvas.${selector}`);
         canvas.width = width;
         canvas.height = height;
         cnv.context = canvas.getContext('2d');

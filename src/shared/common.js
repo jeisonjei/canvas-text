@@ -19,4 +19,11 @@ var getId = (function () {
     }
 })();
 
-export { g, isEmpty, getId}
+function applyTransformationToPoint(x, y, matrix) {
+    const newX = matrix[0] * x + matrix[3] * y + matrix[6];
+    const newY = matrix[1] * x + matrix[4] * y + matrix[7];
+    return new Point(newX, newY);
+  }
+  
+
+export { g, isEmpty, getId, applyTransformationToPoint}

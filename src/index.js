@@ -19,6 +19,7 @@ import {
 
 import { getMode, setMode } from "./shared/mode.js";
 import { filterText } from "./services/textFilter.js";
+import { registerMouseWheelEvent } from "./handlers/mouse/wheel.js";
 
 /**
  * # Описание программы
@@ -58,7 +59,7 @@ import { filterText } from "./services/textFilter.js";
  * * ### handleKeypress()
  */
 function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
-  cnv.init(canvasSelector, canvas.width, canvas.height);
+  cnv.init(canvasSelector, canvasWidth, canvasHeight);
   fromEvent(cnv.context.canvas, "mousedown")
     .pipe(
       map((v) =>
@@ -83,6 +84,10 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
     .pipe(filter((event) => filterText(event)))
     .subscribe(handleTyping);
   registerModeChangeEventListener();
+  registerMouseWheelEvent();
+  a.curTextLine.fontSize = 60;
+  cnv.setFontSize(a.curTextLine.fontSize);
+
 }
 
 // ---------------------------------------------------------------- OBSERVERABLES
@@ -167,12 +172,12 @@ functionCalled$.subscribe((fn) => {
 
 // ---------------------------------------------------------------- INITIALIZATION
 
-(function () {
-  cnv.init("canvas", window.innerWidth - 50, window.innerHeight - 50);
+// (function () {
+//   cnv.init("canvas", window.innerWidth - 50, window.innerHeight - 50);
 
-  a.curTextLine.fontSize = 60;
-  cnv.setFontSize(a.curTextLine.fontSize);
-})();
+//   a.curTextLine.fontSize = 60;
+//   cnv.setFontSize(a.curTextLine.fontSize);
+// })();
 
 // ---------------------------------------------------------------- MOUSE AND KEYBOARD EVENT HANDLERS
 
@@ -217,6 +222,7 @@ function handleMousedown(mouse) {
   });
 }
 function handleTyping(event) {
+
   if (getMode() !== "text") return;
 
   if (event.key === "Enter") {
@@ -259,7 +265,7 @@ function handleTyping(event) {
     } else {
       let letter = a.curTextLine.textArray[a.cursor.index];
       a.curTextLine.textArray.splice(a.cursor.index, 1, event.key, letter);
-      functionCalled$.next({ self: "letterInTheMiddle" });
+
       return;
     }
 

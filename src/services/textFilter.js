@@ -35,7 +35,7 @@ function filterText(keydownEvent) {
         'г',
         'д',
         'е',
-        'ё',
+        // 'ё',
         'ж',
         'з',
         'и',

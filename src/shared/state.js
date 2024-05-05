@@ -7,6 +7,8 @@ import { Cursor } from "../models/Cursor";
 var a = {
     curTextLine: new TextBlock({}, [], null, 'black'),
     cursor: new Cursor(null),
+    zl: 1,
+    zlc: 1,
     
 }
 

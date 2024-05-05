@@ -6,16 +6,21 @@ import { rerender } from "../../index.js";
 
 
 function registerModeChangeEventListener(event) {
+    /**
+     * Регистрирует событие нажатия клавиш. Только для смены режимов.
+     * Основная регистрация событий нажатия клавиш осуществляется в модуле index.js
+     */
     if (!event) {
         setMode('select');
         document.addEventListener('keydown', registerModeChangeEventListener);
         return;
     };
+    
     if (getMode() !== 'text') {
         if (event.key === 's' || event.key === 'S' || event.key === 'ы') {
             setMode('select');
         }
-        else if (event.key === 'e' || event.key === 'E' || event.key === 'у') {
+        else if (event.key === 'x' || event.key === 'X' || event.key === 'ч') {
             setMode('edit');
         }
         else if (event.key === 't' || event.key === 'T' || event.key === 'е') {
@@ -30,6 +35,7 @@ function registerModeChangeEventListener(event) {
 
     }
     else {
+        
         if (event.key === 'Escape' || event.key === 'Esc') {
             setMode('select');
 
@@ -38,6 +44,7 @@ function registerModeChangeEventListener(event) {
             }
             a.curTextLine.start = {};
             a.curTextLine.textArray = [];
+            
         }
     }
 }
