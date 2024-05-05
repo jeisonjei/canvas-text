@@ -35,7 +35,7 @@ registerModeChangeEventListener();
 
 var functionCalled$ = new Subject();
 functionCalled$.subscribe(fn => {
-    if (['handleTyping', 'handleArrowLeft', 'handleArrowRight','letterInTheMiddle','handleBackspaceInTheMiddle', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
+    if (['handleTyping', 'handleArrowLeft', 'handleArrowRight', 'letterInTheMiddle', 'handleBackspaceInTheMiddle', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
         /**
          * Вспомогательные функции будут располагаться здесь, в одном месте. Это удобно, так как сразу можно видеть
          * из каких функций эти вспомогательные операции вызываются.
@@ -56,6 +56,8 @@ functionCalled$.subscribe(fn => {
             }
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
+
+            console.log(`** index ${a.cursor.index}`);
         }
         else if (fn.self === 'handleArrowRight') {
             a.cursor.index = a.cursor.index + 1;
@@ -67,6 +69,8 @@ functionCalled$.subscribe(fn => {
             }
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
+
+            console.log(`** index ${a.cursor.index}`);
         }
         else if (fn.self === 'letterInTheMiddle') {
             a.cursor.index = a.cursor.index + 1;
@@ -78,17 +82,15 @@ functionCalled$.subscribe(fn => {
             }
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
+
+            console.log(`** index ${a.cursor.index}`);
         }
         else if (fn.self === 'handleBackspaceInTheMiddle') {
-            // TODO: handle
-            a.cursor.index = a.cursor.index - 1;
-            let letter = a.curTextLine.textArray[a.cursor.index-1];
-            let letterWidth = cnv.context.measureText(letter).width;
+            // TODO: handle            
             console.log(`** index ${a.cursor.index}`);
             console.log(`** letter ${letter}`);
             console.log(`** width ${letterWidth}`);
-            a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
-            
+
         }
 
     }
@@ -173,14 +175,25 @@ function handleTyping(event) {
     else if (event.key === 'Backspace') {
         if (a.cursor.index === a.curTextLine.textArray.length) {
             a.curTextLine.textArray.pop();
-            
+
         }
         else {
-            a.curTextLine.textArray.splice(a.cursor.index - 1, 1);
+
+            if (a.cursor.index <= 0) {
+                a.cursor.pos = np(a.curTextLine.start.x, a.curTextLine.start.y);
+                a.cursor.index = 0;
+                return;
+            }
+            a.cursor.index = a.cursor.index - 1;
+            let letter = a.curTextLine.textArray.splice(a.cursor.index, 1);
+
             cnv.clear();
             printLine(a.curTextLine);
             rerender();
-            functionCalled$.next({ self: 'handleBackspaceInTheMiddle' });
+            
+            let letterWidth = cnv.context.measureText(letter).width;
+            a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
+
             return;
         }
 
@@ -219,7 +232,7 @@ function handleTyping(event) {
             printLine(a.curTextLine);
 
             rerender();
-            functionCalled$.next({self: 'letterInTheMiddle'});
+            functionCalled$.next({ self: 'letterInTheMiddle' });
             return;
 
         }
