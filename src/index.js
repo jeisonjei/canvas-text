@@ -20,6 +20,9 @@ import {
 import { getMode, setMode } from "./shared/mode.js";
 import { filterText } from "./services/textFilter.js";
 import { registerMouseWheelEvent } from "./handlers/mouse/wheel.js";
+import { registerSpacebarEvents } from "./handlers/keyboard/spacebar.js";
+
+import { mat3 } from "gl-matrix";
 
 /**
  * # Описание программы
@@ -83,8 +86,11 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
   fromEvent(document, "keydown")
     .pipe(filter((event) => filterText(event)))
     .subscribe(handleTyping);
+  
   registerModeChangeEventListener();
   registerMouseWheelEvent();
+  registerSpacebarEvents();
+
   a.curTextLine.fontSize = 60;
   cnv.setFontSize(a.curTextLine.fontSize);
 
@@ -308,6 +314,34 @@ function handleMousemove(mouse) {
       rerender();
     }
   }
+  if (a.pan) {
+    const mouseWebgl = mouse;
+
+    if (a.isPanning) {
+        a.pan_start_x = mouseWebgl.x;
+        a.pan_start_y = mouseWebgl.y;
+        a.isPanning = false;
+    }
+
+    a.pan_tx = mouseWebgl.x - a.pan_start_x;
+    a.pan_ty = mouseWebgl.y - a.pan_start_y;
+
+
+
+    const pan_mat = mat3.fromTranslation(mat3.create(), [a.pan_tx, a.pan_ty, 0]);
+    a.pan_mat = [...pan_mat];
+    mat3.transpose(pan_mat, pan_mat);
+
+    const scalex = 1 / cnv.context.canvas.width;
+    const scaley = 1 / cnv.context.canvas.height;
+    const tx = a.pan_tx / scalex / 2;
+    const ty = a.pan_ty / scaley / 2;
+
+    const matrix = new DOMMatrix([1, 0, 0, 1, tx, -ty]);
+    console.log(matrix);
+    cnv.context.setTransform(matrix);
+    
+  }
 }
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
@@ -386,18 +420,7 @@ function rerender() {
   functionCalled$.next({ self: "rerender" });
 }
 
-function drawCursor(position) {
-  cnv.context.strokeStyle = "blue";
-  cnv.context.lineWidth = 2;
 
-  cnv.context.beginPath();
-  cnv.context.moveTo(position.x, position.y);
-  cnv.context.lineTo(position.x, position.y - cnv.getCursorHeight());
-  cnv.context.stroke();
-
-  // --- functionCalled$ emmition
-  functionCalled$.next({ self: "drawCursor" });
-}
 
 function drawBoundary(line, color) {
   var curColor = cnv.context.strokeStyle;
