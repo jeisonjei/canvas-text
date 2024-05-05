@@ -35,14 +35,14 @@ registerModeChangeEventListener();
 
 var functionCalled$ = new Subject();
 functionCalled$.subscribe(fn => {
-    if (['handleTyping','handleArrowLeft','handleArrowRight', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
+    if (['handleTyping', 'handleArrowLeft', 'handleArrowRight','letterInTheMiddle','handleBackspaceInTheMiddle', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
         /**
          * Вспомогательные функции будут располагаться здесь, в одном месте. Это удобно, так как сразу можно видеть
          * из каких функций эти вспомогательные операции вызываются.
          * Ко вспомогательным функциям относится всё, что напрямую не связано с главными функциями, коими являются
          * операции ввода - то есть взаимодействия пользователя с полотном посредством мыши или клавиатуры
          */
-        if (['handleTyping','handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
+        if (['handleTyping', 'handleMousedown', 'handleButtondownClick', 'handleButtonupClick'].includes(fn.self)) {
             a.cursor.pos = np(a.curTextLine.start.x + cnv.getLineWidth(a.curTextLine), a.curTextLine.start.y);
             a.cursor.index = a.curTextLine.textArray.length;
         }
@@ -59,7 +59,7 @@ functionCalled$.subscribe(fn => {
         }
         else if (fn.self === 'handleArrowRight') {
             a.cursor.index = a.cursor.index + 1;
-            let letter = a.curTextLine.textArray[a.cursor.index-1];
+            let letter = a.curTextLine.textArray[a.cursor.index - 1];
             if (letter === undefined) {
                 a.cursor.pos = a.cursor.pos;
                 a.cursor.index = a.cursor.index - 1;
@@ -68,7 +68,29 @@ functionCalled$.subscribe(fn => {
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
         }
-        
+        else if (fn.self === 'letterInTheMiddle') {
+            a.cursor.index = a.cursor.index + 1;
+            let letter = a.curTextLine.textArray[a.cursor.index - 1];
+            if (letter === undefined) {
+                a.cursor.pos = a.cursor.pos;
+                a.cursor.index = a.cursor.index - 1;
+                return;
+            }
+            let letterWidth = cnv.context.measureText(letter).width;
+            a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
+        }
+        else if (fn.self === 'handleBackspaceInTheMiddle') {
+            // TODO: handle
+            a.cursor.index = a.cursor.index - 1;
+            let letter = a.curTextLine.textArray[a.cursor.index-1];
+            let letterWidth = cnv.context.measureText(letter).width;
+            console.log(`** index ${a.cursor.index}`);
+            console.log(`** letter ${letter}`);
+            console.log(`** width ${letterWidth}`);
+            a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
+            
+        }
+
     }
 });
 
@@ -100,12 +122,12 @@ function handleMousedown(mouse) {
 
     else if (getMode() === 'edit') {
         let selectedLine = textLinesCollection.find(line => line.isinBoundary(mouse));
-        
+
 
         if (selectedLine) {
             a.curTextLine = selectedLine.clone();
             deleteLine(selectedLine);
-            
+
             /**
              * При редактировании строка из коллекции удаляется, а текущая переназначается,
              * но далее устанавливается режим текст, выход из которого возможен нажатием Escape.
@@ -113,7 +135,7 @@ function handleMousedown(mouse) {
              * 
              */
             setMode('text');
-            
+
         }
 
     }
@@ -149,7 +171,18 @@ function handleTyping(event) {
 
     }
     else if (event.key === 'Backspace') {
-        a.curTextLine.textArray.pop();
+        if (a.cursor.index === a.curTextLine.textArray.length) {
+            a.curTextLine.textArray.pop();
+            
+        }
+        else {
+            a.curTextLine.textArray.splice(a.cursor.index - 1, 1);
+            cnv.clear();
+            printLine(a.curTextLine);
+            rerender();
+            functionCalled$.next({ self: 'handleBackspaceInTheMiddle' });
+            return;
+        }
 
         cnv.clear();
         printLine(a.curTextLine);
@@ -160,14 +193,14 @@ function handleTyping(event) {
         cnv.clear();
         printLine(a.curTextLine);
         rerender();
-        functionCalled$.next({self: 'handleArrowLeft'});
+        functionCalled$.next({ self: 'handleArrowLeft' });
         return;
     }
     else if (event.key === 'ArrowRight') {
         cnv.clear();
         printLine(a.curTextLine);
         rerender();
-        functionCalled$.next({self: 'handleArrowRight'});
+        functionCalled$.next({ self: 'handleArrowRight' });
         return;
     }
     else {
@@ -176,7 +209,20 @@ function handleTyping(event) {
          */
         if (isEmpty(a.curTextLine.start)) return;  /** Когда этот объект start пустой? При инициализации программы и при нажатии Escape */
 
-        a.curTextLine.textArray.push(event.key);
+        if (a.cursor.index === a.curTextLine.textArray.length) {
+            a.curTextLine.textArray.push(event.key);
+        }
+        else {
+            let letter = a.curTextLine.textArray[a.cursor.index];
+            a.curTextLine.textArray.splice(a.cursor.index, 1, event.key, letter);
+            cnv.clear();
+            printLine(a.curTextLine);
+
+            rerender();
+            functionCalled$.next({self: 'letterInTheMiddle'});
+            return;
+
+        }
 
         cnv.clear();
         printLine(a.curTextLine);
@@ -204,7 +250,7 @@ function handleMousemove(mouse) {
                 drawBoundary(line, 'red');
             }
         });
-        let a = textLinesCollection.some(line=>line.isinBoundary(mouse));
+        let a = textLinesCollection.some(line => line.isinBoundary(mouse));
         if (!a) {
             cnv.clear();
             rerender();
@@ -345,7 +391,7 @@ function drawBoundary(line, color) {
 
 fromEvent(cnv.context.canvas, 'mousedown').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousedown);
 fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.context.canvas.offsetLeft, v.clientY - cnv.context.canvas.offsetTop))).subscribe(handleMousemove);
-fromEvent(document, 'keydown').pipe(filter(event=>filterText(event))).subscribe(handleTyping);
+fromEvent(document, 'keydown').pipe(filter(event => filterText(event))).subscribe(handleTyping);
 
 
-export { rerender}
+export { rerender }
