@@ -97,8 +97,6 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
 }
 
 
-initCanvasText('canvas', window.innerWidth - 50, window.innerHeight - 50);
-
 // ---------------------------------------------------------------- OBSERVERABLES
 
 var functionCalled$ = new Subject();
