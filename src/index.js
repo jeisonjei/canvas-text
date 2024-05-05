@@ -56,8 +56,6 @@ functionCalled$.subscribe(fn => {
             }
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
-
-            console.log(`** index ${a.cursor.index}`);
         }
         else if (fn.self === 'handleArrowRight') {
             a.cursor.index = a.cursor.index + 1;
@@ -69,8 +67,6 @@ functionCalled$.subscribe(fn => {
             }
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
-
-            console.log(`** index ${a.cursor.index}`);
         }
         else if (fn.self === 'letterInTheMiddle') {
             a.cursor.index = a.cursor.index + 1;
@@ -82,14 +78,18 @@ functionCalled$.subscribe(fn => {
             }
             let letterWidth = cnv.context.measureText(letter).width;
             a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
-
-            console.log(`** index ${a.cursor.index}`);
         }
         else if (fn.self === 'handleBackspaceInTheMiddle') {
-            // TODO: handle            
-            console.log(`** index ${a.cursor.index}`);
-            console.log(`** letter ${letter}`);
-            console.log(`** width ${letterWidth}`);
+            if (a.cursor.index <= 0) {
+                a.cursor.pos = np(a.curTextLine.start.x, a.curTextLine.start.y);
+                a.cursor.index = 0;
+                return;
+            }
+            a.cursor.index = a.cursor.index - 1;
+            let letter = a.curTextLine.textArray.splice(a.cursor.index, 1);
+            let letterWidth = cnv.context.measureText(letter).width;
+            
+            a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
 
         }
 
@@ -179,21 +179,7 @@ function handleTyping(event) {
         }
         else {
 
-            if (a.cursor.index <= 0) {
-                a.cursor.pos = np(a.curTextLine.start.x, a.curTextLine.start.y);
-                a.cursor.index = 0;
-                return;
-            }
-            a.cursor.index = a.cursor.index - 1;
-            let letter = a.curTextLine.textArray.splice(a.cursor.index, 1);
-
-            cnv.clear();
-            printLine(a.curTextLine);
-            rerender();
-            
-            let letterWidth = cnv.context.measureText(letter).width;
-            a.cursor.pos = a.cursor.pos.subtract(np(letterWidth, 0));
-
+            functionCalled$.next({ self: 'handleBackspaceInTheMiddle' });
             return;
         }
 
@@ -203,16 +189,10 @@ function handleTyping(event) {
         rerender();
     }
     else if (event.key === 'ArrowLeft') {
-        cnv.clear();
-        printLine(a.curTextLine);
-        rerender();
         functionCalled$.next({ self: 'handleArrowLeft' });
         return;
     }
     else if (event.key === 'ArrowRight') {
-        cnv.clear();
-        printLine(a.curTextLine);
-        rerender();
         functionCalled$.next({ self: 'handleArrowRight' });
         return;
     }
@@ -228,10 +208,6 @@ function handleTyping(event) {
         else {
             let letter = a.curTextLine.textArray[a.cursor.index];
             a.curTextLine.textArray.splice(a.cursor.index, 1, event.key, letter);
-            cnv.clear();
-            printLine(a.curTextLine);
-
-            rerender();
             functionCalled$.next({ self: 'letterInTheMiddle' });
             return;
 
@@ -407,4 +383,4 @@ fromEvent(cnv.context.canvas, 'mousemove').pipe(map(v => np(v.clientX - cnv.cont
 fromEvent(document, 'keydown').pipe(filter(event => filterText(event))).subscribe(handleTyping);
 
 
-export { rerender }
+export { rerender, printLine }

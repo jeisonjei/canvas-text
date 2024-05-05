@@ -1,5 +1,7 @@
 import { cnv } from "../shared/cnv";
 import { a } from "../shared/state";
+import { printLine, rerender } from "../index";
+
 export class Cursor{
     get pos() {
         return this._pos;
@@ -27,6 +29,10 @@ export class Cursor{
     moveEnd(pos) {
     }
     draw(pos) {
+        cnv.clear();
+        printLine(a.curTextLine);
+        rerender();
+
         cnv.context.strokeStyle = 'blue';
         cnv.context.lineWidth = 2;
     
