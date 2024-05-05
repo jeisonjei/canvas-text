@@ -90,6 +90,9 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
 
 }
 
+
+initCanvasText('canvas', window.innerWidth - 50, window.innerHeight - 50);
+
 // ---------------------------------------------------------------- OBSERVERABLES
 
 var functionCalled$ = new Subject();
@@ -169,15 +172,6 @@ functionCalled$.subscribe((fn) => {
     }
   }
 });
-
-// ---------------------------------------------------------------- INITIALIZATION
-
-// (function () {
-//   cnv.init("canvas", window.innerWidth - 50, window.innerHeight - 50);
-
-//   a.curTextLine.fontSize = 60;
-//   cnv.setFontSize(a.curTextLine.fontSize);
-// })();
 
 // ---------------------------------------------------------------- MOUSE AND KEYBOARD EVENT HANDLERS
 
