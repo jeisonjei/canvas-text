@@ -9,6 +9,10 @@ var a = {
     cursor: new Cursor(null),
     zl: 1,
     zlc: 1,
+    pan: false,
+    isPanning: false,
+    pan_tx: 0,
+    pan_ty: 0,
     
 }
 

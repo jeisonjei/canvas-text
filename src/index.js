@@ -315,16 +315,14 @@ function handleMousemove(mouse) {
     }
   }
   if (a.pan) {
-    const mouseWebgl = mouse;
-
     if (a.isPanning) {
-        a.pan_start_x = mouseWebgl.x;
-        a.pan_start_y = mouseWebgl.y;
+        a.pan_start_x = mouse.x;
+        a.pan_start_y = mouse.y;
         a.isPanning = false;
     }
 
-    a.pan_tx = mouseWebgl.x - a.pan_start_x;
-    a.pan_ty = mouseWebgl.y - a.pan_start_y;
+    a.pan_tx = mouse.x - a.pan_start_x;
+    a.pan_ty = mouse.y - a.pan_start_y;
 
 
 
@@ -332,13 +330,11 @@ function handleMousemove(mouse) {
     a.pan_mat = [...pan_mat];
     mat3.transpose(pan_mat, pan_mat);
 
-    const scalex = 1 / cnv.context.canvas.width;
-    const scaley = 1 / cnv.context.canvas.height;
-    const tx = a.pan_tx / scalex / 2;
-    const ty = a.pan_ty / scaley / 2;
+    const tx = a.pan_tx;
+    const ty = a.pan_ty;
 
-    const matrix = new DOMMatrix([1, 0, 0, 1, tx, -ty]);
-    console.log(matrix);
+    const matrix = new DOMMatrix([1, 0, 0, 1, tx, ty]);
+    
     cnv.context.setTransform(matrix);
     
   }
