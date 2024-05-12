@@ -9,8 +9,9 @@ function setModeCanvasText(mode) {
     else if (mode === 'textEdit') {
         cnv.context.canvas.style.cursor = 'text';
     }
-
-    console.log('** setmode text **');
+    else if (mode === 'select') {
+        cnv.context.canvas.style.cursor = 'pointer';
+    }
 }
 
 function getModeCanvasText() {
