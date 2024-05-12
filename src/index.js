@@ -40,31 +40,7 @@ import { mat3 } from "gl-matrix";
  * а добавление и удаление строк нужно производить через издатель textLinesCollection$.
  *
  */
-// ******************* FOR EXTERNAL USE ONLY *******************
 
-/**
- * # Функции
- * --------------------
- *
- * * ## Основные функции
- * *
- * * ### printLine()
- * *
- * * ### rerender()
- * *
- * * ### handleTyping()
- * * * ### handleArrowLeft()
- * * * ### handleArrowRight()
- * * * ### letterInTheMiddle()
- * * * ### handleBackspaceInTheMiddle()
- * * ### handleMousedown()
- * * ### handleButtondownClick()
- * * ### handleButtonupClick()
- * * ### handleModeChange()
- * * ### handleKeydown()
- * * ### handleKeyup()
- * * ### handleKeypress()
- */
 function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
   cnv.init(canvasSelector, canvasWidth, canvasHeight);
   fromEvent(cnv.context.canvas, "mousedown")
