@@ -33,6 +33,9 @@ function registerModeChangeEventListener(event) {
             rerender();
         }
         else if (event.key === 'Escape') {
+            textLinesCollection.forEach(t => t.selected = false);
+            cnv.clear();
+            rerender();
             setModeCanvasText('select');
         }
 
