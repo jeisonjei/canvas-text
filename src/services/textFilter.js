@@ -96,6 +96,8 @@ function filterText(keydownEvent) {
         'Backspace',
         'ArrowLeft',
         'ArrowRight',
+        'ArrowUp',
+        'ArrowDown',
         'End',
         'Home'
     ];

@@ -88,6 +88,8 @@ functionCalled$.subscribe((fn) => {
       "handleTyping",
       "handleArrowLeft",
       "handleArrowRight",
+      "handleArrowUp",
+      "handleArrowDown",
       "letterInTheMiddle",
       "handleBackspaceInTheMiddle",
       "handleMousedown",
@@ -107,6 +109,8 @@ functionCalled$.subscribe((fn) => {
         "handleMousedown",
         "handleButtondownClick",
         "handleButtonupClick",
+        "handleArrowUp",
+        "handleArrowDown"
       ].includes(fn.self)
     ) {
       a.cursor.pos = np(
@@ -134,7 +138,8 @@ functionCalled$.subscribe((fn) => {
       }
       let letterWidth = cnv.context.measureText(letter).width;
       a.cursor.pos = a.cursor.pos.add(np(letterWidth, 0));
-    } else if (fn.self === "letterInTheMiddle") {
+    }
+    else if (fn.self === "letterInTheMiddle") {
       a.cursor.index = a.cursor.index + 1;
       let letter = a.curTextLine.textArray[a.cursor.index - 1];
       if (letter === undefined) {
@@ -239,7 +244,26 @@ function handleTyping(event) {
   } else if (event.key === "ArrowRight") {
     functionCalled$.next({ self: "handleArrowRight" });
     return;
-  } else {
+  }
+  else if (event.key === "ArrowUp") {
+    cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
+    a.curTextLine.fontSize = a.curTextLine.fontSize + fontSizeStep;
+  
+    cnv.clear();
+    printLine(a.curTextLine);
+    rerender();
+   functionCalled$.next({ self: "handleArrowUp" });
+  }
+  else if (event.key === "ArrowDown") {
+    cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
+    a.curTextLine.fontSize = a.curTextLine.fontSize - fontSizeStep;
+  
+    cnv.clear();
+    printLine(a.curTextLine);
+    rerender();
+    functionCalled$.next({ self: "handleArrowDown" });
+    }
+  else {
     /**
      * Собственно сама операция отрисовки нажимаемых символов
      */
@@ -302,9 +326,9 @@ function handleMousemove(mouse) {
   }
   if (a.pan) {
     if (a.isPanning) {
-        a.pan_start_x = mouse.x;
-        a.pan_start_y = mouse.y;
-        a.isPanning = false;
+      a.pan_start_x = mouse.x;
+      a.pan_start_y = mouse.y;
+      a.isPanning = false;
     }
 
     a.pan_tx = mouse.x - a.pan_start_x;
