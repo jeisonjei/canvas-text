@@ -28,7 +28,9 @@ export class TextBlock {
 
 
     clone() {
-        return new TextBlock(this.start, this.textArray, this.fontSize, this.color);
+        let newTextBlock =  new TextBlock(this.start, this.textArray, this.fontSize, this.color);
+        newTextBlock.selected = this.selected;
+        return newTextBlock;
     }
 
     getBoundary() {
