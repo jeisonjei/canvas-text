@@ -13,6 +13,8 @@ var a = {
     isPanning: false,
     pan_tx: 0,
     pan_ty: 0,
+
+    magnet$: new Subject(),
     
 }
 
