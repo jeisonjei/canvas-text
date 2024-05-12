@@ -23,6 +23,7 @@ export class TextBlock {
         this.fontSize = fontSize;
         this._selected = false;
         this.color = color;
+        this.type = 'text';
     }
 
 
