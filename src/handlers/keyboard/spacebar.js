@@ -10,12 +10,8 @@ import { getMode, getModeCanvasText } from "../../shared/mode";
 function handleSpacebarDown() {
     a.pan = true;
     a.isPanning = true;
-
-    console.log(`** handleSpacebarDown **`);
 }
 function handleSpacebarUp() {
-
-    console.log(`** handleSpacebarUp **`);
 
     a.pan = false;
 
@@ -24,7 +20,6 @@ function handleSpacebarUp() {
     const ty = a.pan_ty ;
 
     textLinesCollection.forEach(textLine => {
-        console.log(textLine);
         textLine.start.x = textLine.start.x + tx;
         textLine.start.y = textLine.start.y + ty;
 
@@ -32,8 +27,6 @@ function handleSpacebarUp() {
     cnv.context.setTransform(new DOMMatrix([1, 0, 0, 1, 0, 0]));
     cnv.clear();
     rerender();
-
-    console.log(`** textLinesCollection: ${textLinesCollection}`);
 
     // --- text
 
