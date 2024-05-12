@@ -14,9 +14,10 @@ var a = {
     pan_tx: 0,
     pan_ty: 0,
 
-    magnet$: new Subject(),
-    
+    magnet: null
 }
+
+var magnet$ = new Subject();
 
 var textLinesCollection = [];
 
@@ -26,6 +27,9 @@ var textLinesCollection$ = new Subject();
 
 
 // ****************************************************************
+magnet$.subscribe((v) => {
+    a.magnet = {...v};
+})
 textLinesCollection$.subscribe((v) => {
     if (v.fnName === 'push') {
         if (v.line.textArray.length > 0) {
@@ -48,4 +52,4 @@ function deleteLine(line) {
 
 // ****************************************************************
 
-export { a, textLinesCollection, fontSizeStep, textLinesCollection$, addLine, deleteLine };
+export { a, textLinesCollection, fontSizeStep, textLinesCollection$, addLine, deleteLine, magnet$ };
