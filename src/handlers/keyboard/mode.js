@@ -1,5 +1,5 @@
 import { cnv } from "../../shared/cnv.js";
-import { getMode, setMode } from "../../shared/mode.js";
+import { getModeCanvasText, setModeCanvasText } from "../../shared/mode.js";
 import { textLinesCollection$, a, textLinesCollection, deleteLine } from "../../shared/state.js";
 import { rerender } from "../../index.js";
 
@@ -11,20 +11,20 @@ function registerModeChangeEventListener(event) {
      * Основная регистрация событий нажатия клавиш осуществляется в модуле index.js
      */
     if (!event) {
-        setMode('select');
+        setModeCanvasText('select');
         document.addEventListener('keydown', registerModeChangeEventListener);
         return;
     };
     
-    if (getMode() !== 'text') {
+    if (getModeCanvasText() !== 'text') {
         if (event.key === 's' || event.key === 'S' || event.key === 'ы') {
-            setMode('select');
+            setModeCanvasText('select');
         }
         else if (event.key === 'x' || event.key === 'X' || event.key === 'ч') {
-            setMode('edit');
+            setModeCanvasText('textEdit');
         }
         else if (event.key === 't' || event.key === 'T' || event.key === 'е') {
-            setMode('text');
+            setModeCanvasText('text');
         }
         else if (event.key === 'Delete') {
             let selected = textLinesCollection.filter(line => line.selected);
@@ -32,12 +32,15 @@ function registerModeChangeEventListener(event) {
             cnv.clear();
             rerender();
         }
+        else if (event.key === 'Escape') {
+            setModeCanvasText('select');
+        }
 
     }
     else {
         
         if (event.key === 'Escape' || event.key === 'Esc') {
-            setMode('select');
+            setModeCanvasText('select');
 
             if (a.curTextLine.textArray.length > 0) {
                 textLinesCollection$.next({ fnName: 'push', line: a.curTextLine.clone() });

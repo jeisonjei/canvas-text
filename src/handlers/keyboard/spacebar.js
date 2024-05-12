@@ -4,7 +4,7 @@ import { textLinesCollection$, textLinesCollection } from "../../shared/state";
 import { rerender } from "../..";
 
 import { mat3 } from "gl-matrix";
-import { getMode } from "../../shared/mode";
+import { getMode, getModeCanvasText } from "../../shared/mode";
 
 
 function handleSpacebarDown() {
@@ -48,14 +48,14 @@ let spacebarPressed = false;
 
 function registerSpacebarEvents() {
     document.addEventListener('keydown', (ev) => {
-        if (ev.key === ' ' && !spacebarPressed && getMode()!=='text') {
+        if (ev.key === ' ' && !spacebarPressed && getModeCanvasText()!=='text') {
             handleSpacebarDown();
             spacebarPressed = true;
         }
     });
     
     document.addEventListener('keyup', (ev) => {
-        if (ev.key === ' ' && getMode()!== 'text') {
+        if (ev.key === ' ' && getModeCanvasText()!== 'text') {
             handleSpacebarUp();
             spacebarPressed = false;
         }

@@ -17,7 +17,7 @@ import {
   deleteLine,
 } from "./shared/state.js";
 
-import { getMode, setMode } from "./shared/mode.js";
+import { getModeCanvasText, setModeCanvasText } from "./shared/mode.js";
 import { filterText } from "./services/textFilter.js";
 import { registerMouseWheelEvent } from "./handlers/mouse/wheel.js";
 import { registerSpacebarEvents } from "./handlers/keyboard/spacebar.js";
@@ -180,13 +180,13 @@ functionCalled$.subscribe((fn) => {
 // ---------------------------------------------------------------- MOUSE AND KEYBOARD EVENT HANDLERS
 
 function handleMousedown(mouse) {
-  if (getMode() === "select") {
+  if (getModeCanvasText() === "select") {
     textLinesCollection.forEach((line) => {
       if (line.isinBoundary(mouse)) {
         line.selected = !line.selected;
       }
     });
-  } else if (getMode() === "edit") {
+  } else if (getModeCanvasText() === "textEdit") {
     let selectedLine = textLinesCollection.find((line) =>
       line.isinBoundary(mouse)
     );
@@ -201,9 +201,9 @@ function handleMousedown(mouse) {
        * А при нажатии Escape текущая строка добавляется в коллекцию и обнуляется (см. модуль mode.js)
        *
        */
-      setMode("text");
+      setModeCanvasText("text");
     }
-  } else if (getMode() === "text") {
+  } else if (getModeCanvasText() === "text") {
     addLine(a.curTextLine.clone());
 
     a.curTextLine.start = { ...mouse };
@@ -221,7 +221,7 @@ function handleMousedown(mouse) {
 }
 function handleTyping(event) {
 
-  if (getMode() !== "text") return;
+  if (getModeCanvasText() !== "text") return;
 
   if (event.key === "Enter") {
     addLine(a.curTextLine.clone());
@@ -280,9 +280,9 @@ function handleTyping(event) {
 }
 
 function handleMousemove(mouse) {
-  if (getMode() === "text") return;
+  if (getModeCanvasText() === "text") return;
 
-  if (getMode() === "select") {
+  if (getModeCanvasText() === "select") {
     textLinesCollection.forEach((line) => {
       if (line.isinBoundary(mouse)) {
         cnv.clear();
@@ -296,7 +296,7 @@ function handleMousemove(mouse) {
       rerender();
     }
   }
-  if (getMode() === "edit") {
+  if (getModeCanvasText() === "textEdit") {
     textLinesCollection.forEach((line) => {
       if (line.isinBoundary(mouse)) {
         cnv.clear();
