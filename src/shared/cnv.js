@@ -15,6 +15,9 @@ export class cnv{
     static setFontSize(size) {
         cnv.context.font = size + "px Arial";
     }
+    static getFontSize() {
+        return cnv.context.font.split('px')[0];
+    }
 
     static getLineSpace(line) {
         var font = cnv.context.font;
