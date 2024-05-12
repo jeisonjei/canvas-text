@@ -24,6 +24,14 @@ function applyTransformationToPoint(x, y, matrix) {
     const newY = matrix[1] * x + matrix[4] * y + matrix[7];
     return new Point(newX, newY);
   }
+
+  function isPointInsideFrame(frame, x, y) {
+    const { point1, point2, point3 } = frame;
+    if (x > point1.x && x < point2.x && ((y > point3.y && y < point2.y) || (y > point2.y && y < point3.y))) {
+      return true;
+    }
+    return false;
+  }
   
 
-export { g, isEmpty, getId, applyTransformationToPoint}
+export { g, isEmpty, getId, applyTransformationToPoint, isPointInsideFrame}

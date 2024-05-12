@@ -1,5 +1,6 @@
 import { cnv } from "../shared/cnv.js";
 import { g as np } from "../shared/common.js";
+import { isPointInsideFrame } from "../shared/common.js";
 
 export class TextBlock {
 
@@ -47,6 +48,32 @@ export class TextBlock {
     isinBoundary(mouse) {
         var { p1, p2, p3, p4 } = this.getBoundary();
         return (p1.x <= mouse.x && p2.x >= mouse.x && p4.y >=mouse.y && p1.y<=mouse.y);
+    }
+    isinSelectFrame(frame) {
+        var { p1, p2, p3, p4 } = this.getBoundary();
+        if (
+            isPointInsideFrame(frame, p1.x, p1.y) &&
+            isPointInsideFrame(frame, p2.x, p2.y) &&
+            isPointInsideFrame(frame, p3.x, p3.y) &&
+            isPointInsideFrame(frame, p4.x, p4.y)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+    isinSelectFrameAtLeast(frame) {
+        var { p1, p2, p3, p4 } = this.getBoundary();
+        if (
+            isPointInsideFrame(frame, p1.x, p1.y) ||
+            isPointInsideFrame(frame, p2.x, p2.y) ||
+            isPointInsideFrame(frame, p3.x, p3.y) ||
+            isPointInsideFrame(frame, p4.x, p4.y)
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
 }
