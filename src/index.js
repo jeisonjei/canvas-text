@@ -3,7 +3,7 @@
  * ДОДЕЛАТЬ ЭТОТ ПАКЕТ И ВЕРНУТЬСЯ К РАЗРАБОТКЕ ОСНОВНОЙ ПРОГРАММЫ tomat.sapr
  */
 
-import { fromEvent } from "rxjs";
+import { fromEvent, tap } from "rxjs";
 import { map, filter } from "rxjs";
 import { Subject } from "rxjs";
 import { g as np, isEmpty } from "./shared/common.js";
@@ -43,7 +43,8 @@ import { mat3 } from "gl-matrix";
 
 function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
   cnv.init(canvasSelector, canvasWidth, canvasHeight);
-  fromEvent(cnv.context.canvas, "mousedown")
+  fromEvent(document, "mousedown")
+    
     .pipe(
       map((v) =>
         np(
@@ -53,7 +54,8 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
       )
     )
     .subscribe(handleMousedown);
-  fromEvent(cnv.context.canvas, "mousemove")
+
+  fromEvent(document, "mousemove")
     .pipe(
       map((v) =>
         np(
@@ -186,8 +188,14 @@ function handleMousedown(mouse) {
   } else if (getModeCanvasText() === "text") {
     addLine(a.curTextLine.clone());
 
-    a.curTextLine.start = { ...mouse };
+    if (a.magnet) {
+      a.curTextLine.start = a.magnet;
+    }
+    else {
+      a.curTextLine.start = mouse;
+    }
     a.curTextLine.textArray = [];
+
   }
 
   cnv.clear();
