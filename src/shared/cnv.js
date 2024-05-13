@@ -1,3 +1,5 @@
+import { fontSize$ } from "./state";
+
 export class cnv{
     static context = null;
 
@@ -14,6 +16,7 @@ export class cnv{
 
     static setFontSize(size) {
         cnv.context.font = size + "px Arial";
+        fontSize$.next(size);
     }
     static getFontSize() {
         return cnv.context.font.split('px')[0];

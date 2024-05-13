@@ -19,6 +19,8 @@ var a = {
 
 var magnet$ = new Subject();
 
+var fontSize$ = new Subject();
+
 var textLinesCollection = [];
 
 var fontSizeStep = 4;
@@ -52,4 +54,4 @@ function deleteLine(line) {
 
 // ****************************************************************
 
-export { a, textLinesCollection, fontSizeStep, textLinesCollection$, addLine, deleteLine, magnet$ };
+export { a, textLinesCollection, fontSizeStep, textLinesCollection$, addLine, deleteLine, magnet$, fontSize$ };
