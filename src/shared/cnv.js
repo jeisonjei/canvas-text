@@ -2,20 +2,22 @@ import { fontSize$ } from "./state";
 
 export class cnv{
     static context = null;
+    static fontName = 'Arial';
 
-    static init(selector, width, height) {
+    static init(selector, width, height, fontName) {
         var canvas = document.querySelector(selector);
         canvas.width = width;
         canvas.height = height;
         cnv.context = canvas.getContext('2d');
         cnv.context.textBaseline = 'bottom';
+        cnv.fontName = fontName;
     }
     static clear() {
         cnv.context.clearRect(0, 0, cnv.context.canvas.width, cnv.context.canvas.height);
     }
 
     static setFontSize(size) {
-        cnv.context.font = size + "px Arial";
+        cnv.context.font = size + `px ${cnv.fontName}`;
         fontSize$.next(size);
     }
     static getFontSize() {
@@ -24,7 +26,7 @@ export class cnv{
 
     static getLineSpace(line) {
         var font = cnv.context.font;
-        cnv.context.font = line.fontSize + "px Arial";
+        cnv.context.font = line.fontSize + `px ${cnv.fontName}`;
         var lineSpace = cnv.context.measureText('M').fontBoundingBoxAscent;
         cnv.context.font = font;
         return lineSpace;
@@ -32,7 +34,7 @@ export class cnv{
 
     static getLineWidth(line) {
         var font = cnv.context.font;
-        cnv.context.font = line.fontSize + "px Arial";
+        cnv.context.font = line.fontSize + `px ${this.fontName}`;
         var lineWidth =  cnv.context.measureText(line.textArray.join('')).width;
         cnv.context.font = font;
         return lineWidth;

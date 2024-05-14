@@ -41,8 +41,8 @@ import { mat3 } from "gl-matrix";
  *
  */
 
-function initCanvasText(canvasSelector, canvasWidth, canvasHeight) {
-  cnv.init(canvasSelector, canvasWidth, canvasHeight);
+function initCanvasText(canvasSelector, canvasWidth, canvasHeight, fontName) {
+  cnv.init(canvasSelector, canvasWidth, canvasHeight, fontName);
   fromEvent(document, "mousedown")
     
     .pipe(
