@@ -1,7 +1,3 @@
-/**
- * TODO:
- * ДОДЕЛАТЬ ЭТОТ ПАКЕТ И ВЕРНУТЬСЯ К РАЗРАБОТКЕ ОСНОВНОЙ ПРОГРАММЫ tomat.sapr
- */
 
 import { fromEvent, tap } from "rxjs";
 import { map, filter } from "rxjs";
@@ -77,7 +73,6 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight, fontName) {
   cnv.setFontSize(a.curTextLine.fontSize);
 
 }
-
 
 // ---------------------------------------------------------------- OBSERVERABLES
 

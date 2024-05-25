@@ -2,6 +2,9 @@ import { cnv } from "../shared/cnv.js";
 import { g as np } from "../shared/common.js";
 import { isPointInsideFrame } from "../shared/common.js";
 
+// --- other libraries --------------------------------
+import { v4 as uuidv4 } from "uuid";
+
 export class TextBlock {
 
     get selected() {
@@ -18,7 +21,7 @@ export class TextBlock {
     }
 
     constructor(start, textArray, fontSize, color) {
-        this.id = 0;
+        this.id = uuidv4();
         this.start = { ...start };
         this.textArray = [...textArray];
         this.fontSize = fontSize;

@@ -35,7 +35,6 @@ magnet$.subscribe((v) => {
 textLinesCollection$.subscribe((v) => {
     if (v.fnName === 'push') {
         if (v.line.textArray.length > 0) {
-            v.line.id = getId();
             textLinesCollection.push(v.line);
         }
     }
