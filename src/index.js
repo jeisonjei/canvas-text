@@ -347,43 +347,43 @@ function handleMousemove(mouse) {
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
 
-(function handleButtonupClick(event) {
-  if (!event) {
-    document
-      .querySelector("#font-size-up")
-      .addEventListener("click", handleButtonupClick);
-    return;
-  }
-  cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
-  a.curTextLine.fontSize = a.curTextLine.fontSize + fontSizeStep;
+// (function handleButtonupClick(event) {
+//   if (!event) {
+//     document
+//       .querySelector("#font-size-up")
+//       .addEventListener("click", handleButtonupClick);
+//     return;
+//   }
+//   cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
+//   a.curTextLine.fontSize = a.curTextLine.fontSize + fontSizeStep;
 
-  cnv.clear();
-  printLine(a.curTextLine);
-  rerender();
-  this.blur();
+//   cnv.clear();
+//   printLine(a.curTextLine);
+//   rerender();
+//   this.blur();
 
-  // --- functionCalled$ emmition
-  functionCalled$.next({
-    self: "handleButtonupClick",
-  });
-})();
+//   // --- functionCalled$ emmition
+//   functionCalled$.next({
+//     self: "handleButtonupClick",
+//   });
+// })();
 
-(function handleButtondownClick(event) {
-  if (!event) {
-    document
-      .querySelector("#font-size-down")
-      .addEventListener("click", handleButtondownClick);
-    return;
-  }
-  cnv.setFontSize(a.curTextLine.fontSize - fontSizeStep);
-  a.curTextLine.fontSize = a.curTextLine.fontSize - fontSizeStep;
-  cnv.clear();
-  printLine(a.curTextLine);
-  rerender();
-  this.blur();
-  // --- functionCalled$ emmition
-  functionCalled$.next({ self: "handleButtondownClick" });
-})();
+// (function handleButtondownClick(event) {
+//   if (!event) {
+//     document
+//       .querySelector("#font-size-down")
+//       .addEventListener("click", handleButtondownClick);
+//     return;
+//   }
+//   cnv.setFontSize(a.curTextLine.fontSize - fontSizeStep);
+//   a.curTextLine.fontSize = a.curTextLine.fontSize - fontSizeStep;
+//   cnv.clear();
+//   printLine(a.curTextLine);
+//   rerender();
+//   this.blur();
+//   // --- functionCalled$ emmition
+//   functionCalled$.next({ self: "handleButtondownClick" });
+// })();
 
 // ------------------------------------------------------------------ RENDERING
 function printLine(line) {
