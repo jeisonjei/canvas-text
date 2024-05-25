@@ -37,6 +37,13 @@ export class TextBlock {
         return newTextBlock;
     }
 
+    getObject() {
+        var json = JSON.stringify(this);
+        var sealedObject = JSON.parse(json);
+        sealedObject.id = this.id;
+        return sealedObject;
+    }
+
     getBoundary() {
         var width = cnv.getLineWidth(this);
         var height = cnv.getLineSpace(this);
