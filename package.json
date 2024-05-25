@@ -26,6 +26,7 @@
   "dependencies": {
     "canvas": "^2.11.2",
     "gl-matrix": "^3.4.3",
-    "jsdom": "^24.0.0"
+    "jsdom": "^24.0.0",
+    "uuid": "^9.0.1"
   }
 }
