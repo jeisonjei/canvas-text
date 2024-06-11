@@ -2,9 +2,6 @@ import { cnv } from "../shared/cnv.js";
 import { g as np } from "../shared/common.js";
 import { isPointInsideFrame } from "../shared/common.js";
 
-// --- other libraries --------------------------------
-import { v4 as uuidv4 } from "uuid";
-
 export class TextBlock {
 
     get selected() {
@@ -21,7 +18,7 @@ export class TextBlock {
     }
 
     constructor(start, textArray, fontSize, color) {
-        this.id = uuidv4();
+        this.id = 0;
         this.start = { ...start };
         this.textArray = [...textArray];
         this.fontSize = fontSize;
@@ -35,13 +32,6 @@ export class TextBlock {
         let newTextBlock =  new TextBlock(this.start, this.textArray, this.fontSize, this.color);
         newTextBlock.selected = this.selected;
         return newTextBlock;
-    }
-
-    getObject() {
-        var json = JSON.stringify(this);
-        var sealedObject = JSON.parse(json);
-        sealedObject.id = this.id;
-        return sealedObject;
     }
 
     getBoundary() {

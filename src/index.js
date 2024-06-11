@@ -1,3 +1,7 @@
+/**
+ * TODO:
+ * ДОДЕЛАТЬ ЭТОТ ПАКЕТ И ВЕРНУТЬСЯ К РАЗРАБОТКЕ ОСНОВНОЙ ПРОГРАММЫ tomat.sapr
+ */
 
 import { fromEvent, tap } from "rxjs";
 import { map, filter } from "rxjs";
@@ -69,10 +73,13 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight, fontName) {
   registerMouseWheelEvent();
   registerSpacebarEvents();
 
-  a.curTextLine.fontSize = a.initFontSize;
+  a.curTextLine.fontSize = 60;
   cnv.setFontSize(a.curTextLine.fontSize);
 
 }
+
+initCanvasText('canvas', window.innerWidth - 50, window.innerHeight - 50, "Arial");
+
 
 // ---------------------------------------------------------------- OBSERVERABLES
 
@@ -347,43 +354,43 @@ function handleMousemove(mouse) {
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
 
-// (function handleButtonupClick(event) {
-//   if (!event) {
-//     document
-//       .querySelector("#font-size-up")
-//       .addEventListener("click", handleButtonupClick);
-//     return;
-//   }
-//   cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
-//   a.curTextLine.fontSize = a.curTextLine.fontSize + fontSizeStep;
+(function handleButtonupClick(event) {
+  if (!event) {
+    document
+      .querySelector("#font-size-up")
+      .addEventListener("click", handleButtonupClick);
+    return;
+  }
+  cnv.setFontSize(a.curTextLine.fontSize + fontSizeStep);
+  a.curTextLine.fontSize = a.curTextLine.fontSize + fontSizeStep;
 
-//   cnv.clear();
-//   printLine(a.curTextLine);
-//   rerender();
-//   this.blur();
+  cnv.clear();
+  printLine(a.curTextLine);
+  rerender();
+  this.blur();
 
-//   // --- functionCalled$ emmition
-//   functionCalled$.next({
-//     self: "handleButtonupClick",
-//   });
-// })();
+  // --- functionCalled$ emmition
+  functionCalled$.next({
+    self: "handleButtonupClick",
+  });
+})();
 
-// (function handleButtondownClick(event) {
-//   if (!event) {
-//     document
-//       .querySelector("#font-size-down")
-//       .addEventListener("click", handleButtondownClick);
-//     return;
-//   }
-//   cnv.setFontSize(a.curTextLine.fontSize - fontSizeStep);
-//   a.curTextLine.fontSize = a.curTextLine.fontSize - fontSizeStep;
-//   cnv.clear();
-//   printLine(a.curTextLine);
-//   rerender();
-//   this.blur();
-//   // --- functionCalled$ emmition
-//   functionCalled$.next({ self: "handleButtondownClick" });
-// })();
+(function handleButtondownClick(event) {
+  if (!event) {
+    document
+      .querySelector("#font-size-down")
+      .addEventListener("click", handleButtondownClick);
+    return;
+  }
+  cnv.setFontSize(a.curTextLine.fontSize - fontSizeStep);
+  a.curTextLine.fontSize = a.curTextLine.fontSize - fontSizeStep;
+  cnv.clear();
+  printLine(a.curTextLine);
+  rerender();
+  this.blur();
+  // --- functionCalled$ emmition
+  functionCalled$.next({ self: "handleButtondownClick" });
+})();
 
 // ------------------------------------------------------------------ RENDERING
 function printLine(line) {

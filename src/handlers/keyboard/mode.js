@@ -45,10 +45,6 @@ function registerModeChangeEventListener(event) {
         if (event.key === 'Escape' || event.key === 'Esc') {
             setModeCanvasText('select');
 
-            /**
-             * При выходе из режима печатания проверить, есть ли символы в массиве,
-             * и если есть, то добавить новую строку в textLinesCollection через издатель textLinesCollection$
-             */
             if (a.curTextLine.textArray.length > 0) {
                 textLinesCollection$.next({ fnName: 'push', line: a.curTextLine.clone() });
             }
