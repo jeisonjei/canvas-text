@@ -97,6 +97,7 @@ functionCalled$.subscribe((fn) => {
       "handleMousedown",
       "handleButtondownClick",
       "handleButtonupClick",
+      "setFont"
     ].includes(fn.self)
   ) {
     /**
@@ -112,7 +113,8 @@ functionCalled$.subscribe((fn) => {
         "handleButtondownClick",
         "handleButtonupClick",
         "handleArrowUp",
-        "handleArrowDown"
+        "handleArrowDown",
+        "setFont"
       ].includes(fn.self)
     ) {
       a.cursor.pos = np(
@@ -277,6 +279,7 @@ function handleTyping(event) {
     } else {
       let letter = a.curTextLine.textArray[a.cursor.index];
       a.curTextLine.textArray.splice(a.cursor.index, 1, event.key, letter);
+      functionCalled$.next({self: "letterInTheMiddle"});
 
       return;
     }
