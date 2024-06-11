@@ -14,7 +14,9 @@ var a = {
     pan_tx: 0,
     pan_ty: 0,
 
-    magnet: null
+    magnet: null,
+
+    initFontSize: 60
 }
 
 var magnet$ = new Subject();

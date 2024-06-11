@@ -69,7 +69,7 @@ function initCanvasText(canvasSelector, canvasWidth, canvasHeight, fontName) {
   registerMouseWheelEvent();
   registerSpacebarEvents();
 
-  a.curTextLine.fontSize = 60;
+  a.curTextLine.fontSize = a.initFontSize;
   cnv.setFontSize(a.curTextLine.fontSize);
 
 }
