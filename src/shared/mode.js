@@ -1,8 +1,9 @@
 
 import { cnv } from "./cnv";
+import { a as b } from "../../../../shared/globalState/a";
 function setModeCanvasText(mode) {
-    var modeElement = document.querySelector('#mode');
-    modeElement.textContent = 'mode: ' + mode;
+    b.mode = mode;
+    b.mode$.next(mode);
     if (mode === 'text') {
         cnv.context.canvas.style.cursor = 'default';
     }
@@ -17,7 +18,7 @@ function setModeCanvasText(mode) {
 function getModeCanvasText() {
     var modeElement = document.querySelector('#mode');
     var mode = modeElement.textContent.split(' ').pop();
-    return mode;
+    return b.mode;
 }
 
 export { getModeCanvasText, setModeCanvasText }
