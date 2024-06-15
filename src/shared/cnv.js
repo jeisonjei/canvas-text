@@ -13,7 +13,11 @@ export class cnv{
         cnv.fontName = fontName;
     }
     static clear() {
+        cnv.context.save();
+        cnv.context.setTransform(1, 0, 0, 1, 0, 0);
+
         cnv.context.clearRect(0, 0, cnv.context.canvas.width, cnv.context.canvas.height);
+        cnv.context.restore();
     }
 
     static setFontSize(size) {
