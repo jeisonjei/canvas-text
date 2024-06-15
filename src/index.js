@@ -297,62 +297,65 @@ function handleTyping(event) {
 }
 
 function handleMousemove(mouse) {
-  if (getModeCanvasText() === "text") return;
+  requestAnimationFrame(() => {
+    if (getModeCanvasText() === "text") return;
 
-  if (getModeCanvasText() === "select") {
-    textLinesCollection.forEach((line) => {
-      if (line.isinBoundary(mouse)) {
+    if (getModeCanvasText() === "select") {
+      textLinesCollection.forEach((line) => {
+        if (line.isinBoundary(mouse)) {
+          cnv.clear();
+          rerender();
+          drawBoundary(line, "red");
+        }
+      });
+      let a = textLinesCollection.some((line) => line.isinBoundary(mouse));
+      if (!a) {
         cnv.clear();
         rerender();
-        drawBoundary(line, "red");
       }
-    });
-    let a = textLinesCollection.some((line) => line.isinBoundary(mouse));
-    if (!a) {
-      cnv.clear();
-      rerender();
     }
-  }
-  if (getModeCanvasText() === "textEdit") {
-    textLinesCollection.forEach((line) => {
-      if (line.isinBoundary(mouse)) {
+    if (getModeCanvasText() === "textEdit") {
+      textLinesCollection.forEach((line) => {
+        if (line.isinBoundary(mouse)) {
+          cnv.clear();
+          printLine(a.curTextLine);
+          rerender();
+          drawBoundary(line, "blue");
+        }
+      });
+      let t = textLinesCollection.some((line) => line.isinBoundary(mouse));
+      if (!t) {
         cnv.clear();
         printLine(a.curTextLine);
         rerender();
-        drawBoundary(line, "blue");
       }
-    });
-    let t = textLinesCollection.some((line) => line.isinBoundary(mouse));
-    if (!t) {
-      cnv.clear();
-      printLine(a.curTextLine);
-      rerender();
     }
-  }
-  if (a.pan) {
-    if (a.isPanning) {
-      a.pan_start_x = mouse.x;
-      a.pan_start_y = mouse.y;
-      a.isPanning = false;
+    if (a.pan) {
+      if (a.isPanning) {
+        a.pan_start_x = mouse.x;
+        a.pan_start_y = mouse.y; 
+        a.isPanning = false;
+      }
+  
+      a.pan_tx = mouse.x - a.pan_start_x;
+      a.pan_ty = mouse.y - a.pan_start_y;
+  
+  
+  
+      const pan_mat = mat3.fromTranslation(mat3.create(), [a.pan_tx, a.pan_ty, 0]);
+      a.pan_mat = [...pan_mat];
+      mat3.transpose(pan_mat, pan_mat);
+  
+      const tx = a.pan_tx;
+      const ty = a.pan_ty;
+  
+      const matrix = new DOMMatrix([1, 0, 0, 1, tx, ty]);
+      
+      cnv.context.setTransform(matrix);
+      
     }
-
-    a.pan_tx = mouse.x - a.pan_start_x;
-    a.pan_ty = mouse.y - a.pan_start_y;
-
-
-
-    const pan_mat = mat3.fromTranslation(mat3.create(), [a.pan_tx, a.pan_ty, 0]);
-    a.pan_mat = [...pan_mat];
-    mat3.transpose(pan_mat, pan_mat);
-
-    const tx = a.pan_tx;
-    const ty = a.pan_ty;
-
-    const matrix = new DOMMatrix([1, 0, 0, 1, tx, ty]);
-    
-    cnv.context.setTransform(matrix);
-    
-  }
+  
+  })
 }
 
 // ------------------------------------------------------------------ BUTTONS' EVENT HANDLERS
