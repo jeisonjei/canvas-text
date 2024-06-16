@@ -33,9 +33,31 @@ function handleMouseWheel(ev) {
 
 }
 
+function updateZoomLevel(newZoomLevel) {
+
+    const scalingMatrix = mat3.fromScaling(mat3.create(), [newZoomLevel, newZoomLevel]);
+    const translationMatrix = mat3.fromTranslation(mat3.create(), [
+        -(newZoomLevel - 1) * cnv.context.canvas.width / 2,
+        -(newZoomLevel - 1) * cnv.context.canvas.height / 2
+    ]);
+    const transformationMatrix = mat3.multiply(mat3.create(), translationMatrix, scalingMatrix);
+    var fontSize = cnv.context.font.split('px')[0] * newZoomLevel;
+    // cnv.setFontSize влияет только на текущую строку
+    cnv.setFontSize(Number.parseFloat(fontSize));
+
+    textLinesCollection.forEach(line => {
+        line.start = applyTransformationToPoint(line.start.x, line.start.y, transformationMatrix);
+        line.fontSize = line.fontSize * newZoomLevel;
+    });
+
+    cnv.clear();
+    rerender();
+
+}
+
 function registerMouseWheelEvent() {
     const wheel$ = fromEvent(document, 'wheel');
     wheel$.subscribe(handleMouseWheel);
 }
 
-export {handleMouseWheel, registerMouseWheelEvent}
+export {handleMouseWheel, registerMouseWheelEvent, updateZoomLevel}
