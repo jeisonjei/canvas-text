@@ -89,6 +89,13 @@ function filterText(keydownEvent) {
         "°",
         "³",
         "²",
+        ".",
+        "(",
+        ")",
+        "?",
+        "!",
+        "#",
+        "$",
         
 
         // ... special keys
