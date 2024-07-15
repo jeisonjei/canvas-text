@@ -217,7 +217,7 @@ function handleMousedown(mouse) {
   });
 }
 function handleTyping(event) {
-
+  
   if (getModeCanvasText() !== "text") return;
 
   if (event.key === "Enter") {

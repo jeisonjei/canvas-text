@@ -3,6 +3,8 @@ import { getModeCanvasText, setModeCanvasText } from "../../shared/mode.js";
 import { textLinesCollection$, a, textLinesCollection, deleteLine } from "../../shared/state.js";
 import { rerender } from "../../index.js";
 
+import { a as b } from "../../../../../shared/globalState/a.js";
+
 
 
 function registerModeChangeEventListener(event) {
@@ -15,6 +17,9 @@ function registerModeChangeEventListener(event) {
         document.addEventListener('keydown', registerModeChangeEventListener);
         return;
     };
+
+    if (b.blockUI) return;
+    
     
     if (getModeCanvasText() !== 'text') {
         if (event.key === 's' || event.key === 'S' || event.key === 'ы') {
