@@ -28,6 +28,8 @@ export class TextBlock {
         this._selected = false;
         this.color = color;
         this.type = 'text';
+
+        this.rtype = '';
     }
 
 
