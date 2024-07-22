@@ -29,7 +29,9 @@ export class TextBlock {
         this.color = color;
         this.type = 'text';
 
-        this.rtype = '';
+        this.rtype = 'без типа';
+
+        this.hidden = false;
     }
 
 

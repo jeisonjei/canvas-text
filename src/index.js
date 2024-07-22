@@ -430,7 +430,7 @@ function rerender() {
    * а для отрисовки коллекции уже существующих строк используется та же функция, но в неё уже не передаётся текущая строка.
    */
 
-  textLinesCollection.forEach((line) => {
+  textLinesCollection.filter(t=>!t.hidden).forEach((line) => {
     printLine(line);
   });
 
