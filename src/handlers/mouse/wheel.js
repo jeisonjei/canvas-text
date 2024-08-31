@@ -1,4 +1,5 @@
 import { a } from "../../shared/state";
+import { a as b} from '../../../../../shared/globalState/a';
 import { mat3 } from "gl-matrix";
 import { cnv } from "../../shared/cnv";
 import { applyTransformationToPoint } from "../../shared/common";
@@ -9,6 +10,7 @@ import { fromEvent } from "rxjs";
 import { rerender } from "../..";
 
 function handleMouseWheel(ev) {
+    if (b.blockUI) return;
     a.zl = ev.deltaY > 0 ? 0.90 : 1.1;
     a.zlc *= a.zl;
 
