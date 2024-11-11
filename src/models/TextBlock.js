@@ -1,3 +1,4 @@
+import { Point } from "../../../../models/Point.mjs";
 import { cnv } from "../shared/cnv.js";
 import { g as np } from "../shared/common.js";
 import { isPointInsideFrame } from "../shared/common.js";
@@ -58,10 +59,10 @@ export class TextBlock {
     getBoundary() {
         var width = cnv.getLineWidth(this);
         var height = cnv.getLineSpace(this);
-        var p1 = np(this.start.x, this.start.y - height);
-        var p2 = np(this.start.x + width, this.start.y - height);
-        var p3 = np(this.start.x + width, this.start.y);
-        var p4 = np(this.start.x, this.start.y);
+        var p1 = new Point(this.start.x, this.start.y - height);
+        var p2 = new Point(this.start.x + width, this.start.y - height);
+        var p3 = new Point(this.start.x + width, this.start.y);
+        var p4 = new Point(this.start.x, this.start.y);
         return { p1, p2, p3, p4 };
 
     }
