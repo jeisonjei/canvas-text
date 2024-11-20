@@ -34,7 +34,7 @@ var selectedText$ = new Subject();
 
 // ****************************************************************
 magnet$.subscribe((v) => {
-    a.magnet = {...v};
+    a.magnet = v.clone();
 })
 textLinesCollection$.subscribe((v) => {
     if (v.fnName === 'push') {
