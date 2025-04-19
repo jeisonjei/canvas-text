@@ -4,6 +4,7 @@ import { textLinesCollection$, a, textLinesCollection, deleteLine } from "../../
 import { rerender } from "../../index.js";
 
 import { a as b } from "../../../../../shared/globalState/a.js";
+import { handleEscape } from "../../../../../services/operations";
 
 
 
@@ -22,6 +23,9 @@ function registerModeChangeEventListener(event) {
     
     
     if (getModeCanvasText() !== 'text') {
+
+        console.log(`** Escape mode change, mode: ${getModeCanvasText()} **`);
+        
         if (event.key === 's' || event.key === 'S' || event.key === 'ы') {
             setModeCanvasText('select');
         }
@@ -42,6 +46,7 @@ function registerModeChangeEventListener(event) {
             cnv.clear();
             rerender();
             setModeCanvasText('select');
+            handleEscape(event);
         }
 
     }
@@ -49,6 +54,8 @@ function registerModeChangeEventListener(event) {
         
         if (event.key === 'Escape' || event.key === 'Esc') {
             setModeCanvasText('select');
+
+            console.log('** Escape');
 
             if (a.curTextLine.textArray.length > 0) {
                 textLinesCollection$.next({ fnName: 'push', line: a.curTextLine.clone() });
