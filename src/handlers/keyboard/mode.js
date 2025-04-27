@@ -4,7 +4,6 @@ import { textLinesCollection$, a, textLinesCollection, deleteLine } from "../../
 import { rerender } from "../../index.js";
 
 import { a as b } from "../../../../../shared/globalState/a.js";
-import { handleEscape } from "../../../../../services/operations";
 
 
 
@@ -43,7 +42,6 @@ function registerModeChangeEventListener(event) {
             cnv.clear();
             rerender();
             setModeCanvasText('select');
-            handleEscape(event);
         }
 
     }

@@ -56,22 +56,12 @@ export class TextBlock {
         return sealedObject;
     }
     getBoundary() {
-
         var width = cnv.getLineWidth(this);
         var height = cnv.getLineSpace(this);
-        if (this.start.x && this.start.y) {
-            var p1 = np(this.start.x, this.start.y - height);
-            var p2 = np(this.start.x + width, this.start.y - height);
-            var p3 = np(this.start.x + width, this.start.y);
-            var p4 = np(this.start.x, this.start.y);
-            
-        }
-        else {
-            var p1 = np(0, 0);
-            var p2 = np(0, 0);
-            var p3 = np(0, 0);
-            var p4 = np(0,0);
-        }
+        var p1 = np(this.start.x, this.start.y - height);
+        var p2 = np(this.start.x + width, this.start.y - height);
+        var p3 = np(this.start.x + width, this.start.y);
+        var p4 = np(this.start.x, this.start.y);
         return { p1, p2, p3, p4 };
 
     }
