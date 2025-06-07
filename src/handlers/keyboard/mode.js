@@ -3,7 +3,7 @@ import { getModeCanvasText, setModeCanvasText } from "../../shared/mode.js";
 import { textLinesCollection$, a, textLinesCollection, deleteLine } from "../../shared/state.js";
 import { rerender } from "../../index.js";
 
-import { a as b } from "../../../../../shared/globalState/a.js";
+import { a as b } from "../../../../../shared/globalState/a";
 
 
 
